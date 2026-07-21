@@ -129,11 +129,28 @@ class RasterSlice:
         return self.valid_count * self.pixel_area_ha
 
 
-def load_raster_clipped(path: str, aoi: AOI, resampling: str = "nearest") -> RasterSlice:
+def load_raster_clipped(
+    path: str,
+    aoi: AOI,
+    resampling: str = "nearest",
+    band: int = 1,
+    like: "RasterSlice | None" = None,
+) -> RasterSlice:
     """Clip `path` to the AOI, reproject to REFERENCE_CRS, mask to the polygon.
+
+    `band` selects one band of a multi band raster. Only the pathway raster in F02-P4 uses it;
+    every other layer is single band and takes the default.
 
     `resampling` is "nearest" for every categorical layer, which is all of them except the
     continuous FLII score. Categorical values must never be interpolated.
+
+    `like` forces the output onto exactly the grid of an already loaded slice: same shape, same
+    origin, same pixel size, so that `a.values[i]` and `b.values[i]` describe the same ground.
+    Components that only sum or tabulate one raster at a time do not need it and leave it None,
+    which is why every component before F02-P5 does. Component 5.1 does need it: it ranks pixels
+    by one raster and then reads two other rasters at the pixels it selected, which is only
+    meaningful if all three share a grid. Implementations must honour this or 5.1 silently pairs
+    risk with the carbon of a different place.
 
     Returns an all masked array when the raster does not cover the AOI at all. Components
     handle that as "not applicable", not as an error.
