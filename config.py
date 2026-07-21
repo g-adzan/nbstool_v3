@@ -8,7 +8,7 @@ marked <SET ...> to your own file before running. This file also serves as the i
 
 # ============================ REFERENCE CRS ============================
 # The AOI is accepted in any CRS and reprojected to this equal-area CRS for all area work.
-REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area (interim, team to finalize)
+REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
 # ============================ PRE-DEFINED LAYERS (placeholders) ============================
 # Ecosystem type (1.1): 1=Dryland, 2=Mangrove, 3=Peatland

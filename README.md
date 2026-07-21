@@ -52,9 +52,13 @@ Set the same `aoi_id` in every notebook for one project area.
 ## Reference CRS
 
 The AOI is accepted in any CRS and reprojected once to ESRI:54034 (World Cylindrical Equal Area)
-for all area work, by `common.prepare_aoi`. No component reprojects the AOI again. This is
-interim while the team finalizes the reference CRS. It differs from the per-region conformal CRS
-in the backend on purpose: the tool needs area, not distance or shape.
+for all area work, by `common.prepare_aoi`. No component reprojects the AOI again. **Locked by
+the team.** It differs from the per-region conformal CRS in the backend on purpose: the tool
+needs area, not distance or shape.
+
+Consequence to keep in mind: an equal-area projection preserves area but distorts distance and
+shape, increasingly so away from the equator. Every hectare figure in the tool is sound. Any
+future component that measures a distance, a perimeter, or a shape index must not use this CRS.
 
 ## Data inputs
 
