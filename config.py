@@ -127,6 +127,43 @@ WRB_MIN_PROBABILITY_PCT = 1.0   # 3.6 drop groups below this mean probability fr
 WRB_DISPLAY_TOP_N = 5           # 3.6 how many rows the frontend shows before "see the table"
 WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not sum to ~100
 
+# ---------------------------------------------------------------------------------------
+# Pathway assignment (F02-P4)
+# ---------------------------------------------------------------------------------------
+# One raster, three bands, produced by the pathway assignment script. See
+# "NBS Pathway Assignment Framework" for the decision matrix behind the codes.
+PATHWAY_RASTER = r"<SET: path to pathway.tif>"
+
+PATHWAY_BAND           = 1   # primary pathway, exactly one value per pixel
+PATHWAY_SECONDARY_BAND = 2   # supporting pathway, same codes, 0 = none
+PATHWAY_ECOSYSTEM_BAND = 3   # reference ecosystem, passed through for activity selection
+
+PATHWAY_CODES = {
+    0: "No data",
+    1: "Protect",
+    2: "Manage",
+    3: "Restore",
+    4: "Carbon ineligible",
+    5: "Not eligible for NBS",
+}
+
+# Codes 1 to 3 are the actual NBS pathways. Codes 4 and 5 are screening outcomes that sit in the
+# same band: 4 means non carbon options may still exist, 5 means no NBS option at all.
+PATHWAY_ELIGIBLE_CODES = (1, 2, 3)
+
+# Reference ecosystem band. Five classes, unlike the three class ecosystem layer used by 1.1.
+# The two are not interchangeable: this one separates grassland and savanna, which is what makes
+# the savanna guardrail work at the activity level.
+PATHWAY_ECOSYSTEM_CODES = {
+    0: "Water or other",
+    1: "Dryland forest",
+    2: "Mangrove",
+    3: "Peatland",
+    4: "Grassland or savanna",
+}
+
+PATHWAY_UNCLASSIFIED_WARN_PCT = 20.0   # 4.1 flag when this much of the AOI carries no pathway
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 

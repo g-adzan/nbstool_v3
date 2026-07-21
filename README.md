@@ -26,7 +26,7 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA done; 2.3 unspecified |
 | `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.6 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
-| `F02-P4 Pathway.ipynb` | F02-P4 | upcoming                            |
+| `F02-P4 Pathway.ipynb` | F02-P4 | 4.1 done                            |
 | `F02-P5 Benefit.ipynb` | F02-P5 | upcoming                            |
 
 Each component follows the same shape: a markdown cell with data, locked decisions, example
@@ -96,6 +96,7 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
 - `F02-P2 General.ipynb` - components 1.1 to 1.7
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
 - `F02-P2 Climate.ipynb` - components 3.1 to 3.6
+- `F02-P4 Pathway.ipynb` - component 4.1
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
 - `outputs/` - per stage result JSON, written at run time
 - `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
