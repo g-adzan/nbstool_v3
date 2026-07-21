@@ -42,9 +42,14 @@ HAZARD_RASTERS = {
     "landslide":  r"<SET: path to hazard_landslides.tif>",
     "flood":      r"<SET: path to hazard_flood.tif>",
     "flashflood": r"<SET: path to hazard_flashflood.tif>",
-    "fire":       r"<SET: path to hazard_fire.tif>",
+    "fire":       r"<SET: path to fire_hazard.tif>",
     "drought":    r"<SET: path to hazard_drought.tif>",
 }
+
+# Fire susceptibility (Climate module, 3.5). Deliberately an alias, not a second path: 1.7 and
+# 3.5 report the same raster in two different ways, so there must be only one path to set. If
+# these ever become two layers, split them here and say why in the 3.5 markdown cell.
+FIRE_HAZARD_RASTER = HAZARD_RASTERS["fire"]
 
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
