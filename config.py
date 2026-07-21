@@ -8,7 +8,7 @@ marked <SET ...> to your own file before running. This file also serves as the i
 
 # ============================ REFERENCE CRS ============================
 # The AOI is accepted in any CRS and reprojected to this equal-area CRS for all area work.
-REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area (interim, team to finalize)
+REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
 # ============================ PRE-DEFINED LAYERS (placeholders) ============================
 # Ecosystem type (1.1): 1=Dryland, 2=Mangrove, 3=Peatland
@@ -32,7 +32,6 @@ ELEVATION_CLASS_RASTER = r"<SET: path to elevation_class_metric.tif>"
 # Historical deforestation (1.5)
 FC2014_RASTER = r"<SET: path to FC2014.tif>"
 LC2024_RASTER = r"<SET: path to LC2024.tif>"
-NATIONAL_DEFOR_RATE_CSV = r"<SET: path to national_deforestation_rate.csv>"
 
 # Deforestation risk (1.6)
 PROB_RASTER = r"<SET: path to prob.tif>"
@@ -59,8 +58,15 @@ KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 
-# LC 2024 forest definition, Tier 1-2 (Scenario 2A), same as the backend
+# LC 2024 forest definition, Tier 1-2 natural forest (Scenario 2A), same as the backend.
+# In the 20-class LC 2024 legend: 1 flooded forest, 6 mangrove, 7 deciduous, 8 evergreen,
+# 10 mixed forest. Plantation classes (2 rubber, 3 palm, 4 forest plantation, 5 crop
+# plantation) are deliberately excluded.
 FOREST_CODES = [1, 6, 7, 8, 10]
+
+# FC2014 is a binary product, so this is a raster VALUE (1 = forest), not an LC legend code.
+# The Tier 1-2 rule was applied upstream when FC2014 was built, so both dates carry the same
+# forest definition.
 FC2014_FOREST_CODES = [1]
 
 SLOPE_CLASSES = {1: "Flat", 2: "Gently sloping", 3: "Moderately steep",
@@ -71,9 +77,22 @@ HAZARD_LEVELS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very Hig
 
 # ============================ THRESHOLDS AND PARAMETERS ============================
 ADMIN_SLIVER_PCT   = 1.0            # 1.2 report an admin unit only if >= 1% of the AOI
-DEFOR_SIMILAR_BAND = 0.20          # 1.5 within +/- 20% of the national rate reads as "similar"
 DEFOR_PERIOD_YEARS = 2024 - 2014   # 1.5 Puyravaud t2 - t1
 RISK_HIGHER_PCTL   = 60            # 1.6 above this national percentile is "higher than"
 RISK_LOWER_PCTL    = 40            # 1.6 below this national percentile is "lower than"
 PROB_SCALE_MAX     = 65535         # 1.6 prob raster UInt16 encodes 0-100 as 0-65535
 HAZARD_PRESENCE_PCT = 20           # 1.7 representative level = highest class covering >= this % of AOI
+
+# ============================ RESULT HANDOFF ============================
+# Each notebook writes its results here as JSON, and the next notebook reads them back. This is
+# the only channel between notebooks, because notebook filenames (for example
+# "F02-P2 General.ipynb") are not importable Python module names.
+OUTPUT_DIR = r"outputs"
+
+# Stage keys used in the result filenames: <aoi_id>__<stage>.json
+STAGE_GENERAL = "F02-P2-general"
+STAGE_NATURE  = "F02-P2-nature"
+STAGE_CLIMATE = "F02-P2-climate"
+STAGE_THREATS = "F02-P3-threats"
+STAGE_PATHWAY = "F02-P4-pathway"
+STAGE_BENEFIT = "F02-P5-benefit"

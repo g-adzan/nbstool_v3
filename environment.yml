@@ -9,3 +9,5 @@ dependencies:
   - geopandas
   - rasterio
   - shapely
+  - jupyterlab
+  - ipykernel

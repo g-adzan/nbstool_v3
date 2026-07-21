@@ -6,31 +6,59 @@ tool overlays it with pre-defined geospatial layers and returns site characteriz
 profiles, a pathway recommendation, and a benefit estimate.
 
 This repository is the runtime screening layer. It consumes pre-defined layers produced upstream
-by other methods. The `sea_deforestation_risk` pipeline is one of those upstream methods and is
-not part of this repository.
+by other methods.
 
 ## Status
 
-Design stage. The analysis is specified as narrative pseudo-code in
-`docs/backend_analysis_pseudocode.md`. Two modules are drafted: Site Characterization General
-Context (components 1.1 to 1.7) and Site Characterization Nature (2.1 FLII, 2.2 KBA). The next
-module is Site Characterization Climate. Other modules are upcoming.
+Design stage, specified as **Jupyter notebooks that are not yet runnable**. All analysis logic
+is real Python: masking, tabulation, thresholds, narrative construction. Only file access is
+stubbed. The three stubs in `common.py` (`load_raster_clipped`, `load_vector_intersecting`,
+`load_national_forest_risk_percentiles`) raise `NotImplementedError`. Filling them is what makes
+the tool run; nothing else needs rewriting.
 
-## Modules (F02 phased structure)
+Design rationale lives in the markdown cells next to each component, not in a separate document.
 
-| Module | Phase | Status |
-|--------|-------|--------|
-| Site Characterization: General Context | F02-P2 | done (1.1 to 1.7) |
-| Site Characterization: Nature | F02-P2 | done (2.1 FLII, 2.2 KBA) |
-| Site Characterization: Climate | F02-P2 | next |
-| Threat Profiles | F02-P3 | upcoming |
-| Pathway Recommendation | F02-P4 | upcoming |
-| Benefit Quantification | F02-P5 | upcoming |
+## Notebooks (F02 phased structure)
+
+| Notebook               | Phase  | Status                              |
+| ---------------------- | ------ | ----------------------------------- |
+| `F02-P2 General.ipynb` | F02-P2 | done (1.1 to 1.7)                   |
+| `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA done; 2.3 pending |
+| `F02-P2 Climate.ipynb` | F02-P2 | next                                |
+| `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
+| `F02-P4 Pathway.ipynb` | F02-P4 | upcoming                            |
+| `F02-P5 Benefit.ipynb` | F02-P5 | upcoming                            |
+
+Each component follows the same shape: a markdown cell with data, locked decisions, example
+render and downstream use, then a code cell with one `analyze_*` function returning a
+`ComponentResult`.
+
+## How notebooks talk to each other
+
+Notebook filenames contain spaces and hyphens, so they are not importable Python module names.
+Nothing imports a notebook. Instead:
+
+- **Shared code** lives in `common.py` and `config.py`, star imported at the top of every
+  notebook (`from config import *`, `from common import *`), mirroring the
+  `sea_deforestation_risk` house style.
+- **Results** are passed as JSON on disk. Each notebook ends with
+  `save_results(results, aoi, aoi_id, STAGE_*)`, which writes
+  `outputs/<aoi_id>__<stage>.json`. A notebook that needs an earlier stage starts with
+  `load_results(aoi_id, STAGE_*)`. Every stage file repeats the AOI block, so a stale file from
+  a different AOI is caught rather than silently mixed in.
+
+Set the same `aoi_id` in every notebook for one project area.
 
 ## Reference CRS
 
-The AOI is accepted in any CRS and reprojected to ESRI:54034 (World Cylindrical Equal Area) for
-all area work. This is interim while the team finalizes the reference CRS.
+The AOI is accepted in any CRS and reprojected once to ESRI:54034 (World Cylindrical Equal Area)
+for all area work, by `common.prepare_aoi`. No component reprojects the AOI again. **Locked by
+the team.** It differs from the per-region conformal CRS in the backend on purpose: the tool
+needs area, not distance or shape.
+
+Consequence to keep in mind: an equal-area projection preserves area but distorts distance and
+shape, increasingly so away from the equator. Every hectare figure in the tool is sound. Any
+future component that measures a distance, a perimeter, or a shape index must not use this CRS.
 
 ## Data inputs
 
@@ -39,6 +67,12 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
 
 ## Layout
 
-- `config.py` - layer registry, reference CRS, class codes, thresholds
-- `docs/backend_analysis_pseudocode.md` - the design specification
+- `config.py` - layer registry, reference CRS, class codes, thresholds, stage keys
+- `common.py` - AOI contract, data access stubs, zonal tabulation, shared forest masks,
+  narrative helpers, `ComponentResult`, result handoff (`save_results` / `load_results`)
+- `F02-P2 General.ipynb` - components 1.1 to 1.7
+- `F02-P2 Nature.ipynb` - components 2.1 and 2.2
+- `outputs/` - per stage result JSON, written at run time
+- `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
+  conversion is reviewed, then to be deleted
 - `environment.yml` - conda environment

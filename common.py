@@ -1,0 +1,423 @@
+"""
+common.py - shared building blocks for the NBS screening tool.
+
+Everything that more than one component needs lives here: the AOI contract, the data access
+stubs, zonal tabulation, the shared forest 2024 mask, and the small text helpers used to build
+narratives.
+
+NOT RUNNABLE. The functions in the "Data access stubs" section raise NotImplementedError on
+purpose. They are the only place where files are touched. All analysis logic in the component
+modules is real Python and reads from these stubs, so wiring the tool up later means filling
+four functions, not rewriting the analysis.
+
+Design contract
+---------------
+1. The AOI is accepted in any CRS. `prepare_aoi` reprojects it once to REFERENCE_CRS
+   (ESRI:54034, equal area) and every component works on that object. No component reprojects
+   the AOI again.
+2. `AOI.area_ha` is the authoritative denominator for any share that is "share of the site".
+   Components that use a different denominator (valid pixels, forest only) say so explicitly.
+3. Rasters are read through `load_raster_clipped`, which returns a masked array already aligned
+   to the AOI plus the pixel area. In an equal area CRS the pixel area is a constant, so area
+   is always pixel_count * pixel_area_ha.
+4. Components never return raw arrays to the frontend. Arrays that a later component needs
+   (the forest 2024 mask) are produced by a shared function here, not passed between results.
+"""
+
+from __future__ import annotations
+
+import json
+from dataclasses import asdict, dataclass, field, is_dataclass
+from pathlib import Path
+from typing import Iterable, Sequence
+
+import geopandas as gpd
+import numpy as np
+
+from config import (
+    FC2014_RASTER,
+    FC2014_FOREST_CODES,
+    FOREST_CODES,
+    LC2024_RASTER,
+    OUTPUT_DIR,
+    REFERENCE_CRS,
+)
+
+M2_PER_HA = 10_000.0
+
+
+# ============================ AOI CONTRACT ============================
+
+
+@dataclass(frozen=True)
+class AOI:
+    """The project area, already in REFERENCE_CRS.
+
+    Attributes
+    ----------
+    geometry : single polygon or multipolygon in REFERENCE_CRS.
+    area_ha  : total site area. Authoritative denominator for "share of the site".
+    source_crs : the CRS the user supplied, kept for reporting only.
+    """
+
+    geometry: gpd.GeoSeries
+    area_ha: float
+    source_crs: str
+
+
+def prepare_aoi(aoi_any_crs: gpd.GeoDataFrame | gpd.GeoSeries) -> AOI:
+    """Normalise the AOI once, at the entry point of the tool.
+
+    Accepts any CRS, reprojects to REFERENCE_CRS, dissolves multi part input into one geometry
+    so that area is counted once, and measures the total area.
+    """
+    geoms = aoi_any_crs.geometry if isinstance(aoi_any_crs, gpd.GeoDataFrame) else aoi_any_crs
+    source_crs = str(geoms.crs)
+
+    if geoms.crs is None:
+        raise ValueError("AOI has no CRS. The tool cannot measure area without one.")
+
+    geoms = geoms.to_crs(REFERENCE_CRS)
+    dissolved = gpd.GeoSeries([geoms.union_all()], crs=REFERENCE_CRS)
+    area_ha = float(dissolved.area.sum()) / M2_PER_HA
+
+    if area_ha <= 0:
+        raise ValueError("AOI has zero area after reprojection.")
+
+    return AOI(geometry=dissolved, area_ha=area_ha, source_crs=source_crs)
+
+
+# ============================ DATA ACCESS STUBS ============================
+# The only file touching code in the tool. Fill these to make the tool runnable.
+
+
+@dataclass(frozen=True)
+class RasterSlice:
+    """A raster clipped and reprojected to the AOI in REFERENCE_CRS.
+
+    values : masked integer or float array. Masked cells are nodata or outside the AOI.
+    pixel_area_ha : constant, because REFERENCE_CRS is equal area.
+    """
+
+    values: np.ma.MaskedArray
+    pixel_area_ha: float
+
+    @property
+    def valid_count(self) -> int:
+        return int(self.values.count())
+
+    @property
+    def valid_area_ha(self) -> float:
+        return self.valid_count * self.pixel_area_ha
+
+
+def load_raster_clipped(path: str, aoi: AOI, resampling: str = "nearest") -> RasterSlice:
+    """Clip `path` to the AOI, reproject to REFERENCE_CRS, mask to the polygon.
+
+    `resampling` is "nearest" for every categorical layer, which is all of them except the
+    continuous FLII score. Categorical values must never be interpolated.
+
+    Returns an all masked array when the raster does not cover the AOI at all. Components
+    handle that as "not applicable", not as an error.
+    """
+    raise NotImplementedError("Data access stub. Wire to rasterio.")
+
+
+def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
+    """Load only the features of `path` that intersect the AOI, reprojected to REFERENCE_CRS.
+
+    Returns an empty GeoDataFrame when nothing intersects, never None.
+    """
+    raise NotImplementedError("Data access stub. Wire to geopandas.")
+
+
+def load_national_forest_risk_percentiles(country: str) -> dict[int, float] | None:
+    """Percentile breakpoints of national forest deforestation risk, on the 0 to 100 scale.
+
+    Returns {10: value, 20: value, ... 90: value}, or None when the country is missing.
+    """
+    raise NotImplementedError("Data access stub. Wire to NATIONAL_FOREST_RISK_CSV.")
+
+
+# ============================ ZONAL TABULATION ============================
+
+
+@dataclass(frozen=True)
+class ClassShare:
+    """One row of a class distribution."""
+
+    code: int | str
+    label: str
+    area_ha: float
+    pct: float
+
+
+def tabulate_classes(
+    raster: RasterSlice,
+    class_labels: dict[int, str],
+    denominator_ha: float,
+) -> list[ClassShare]:
+    """Count pixels per class code and turn them into area and share.
+
+    `denominator_ha` is passed in rather than derived, because the choice of denominator is a
+    locked decision that differs per component:
+      - share of the whole site  -> aoi.area_ha        (1.1, 2.2)
+      - share of valid pixels    -> raster.valid_area_ha (1.4, 1.7)
+      - share of forest          -> forest area          (2.1)
+    """
+    rows: list[ClassShare] = []
+    for code, label in class_labels.items():
+        count = int((raster.values == code).sum())
+        area_ha = count * raster.pixel_area_ha
+        rows.append(
+            ClassShare(
+                code=code,
+                label=label,
+                area_ha=area_ha,
+                pct=safe_pct(area_ha, denominator_ha),
+            )
+        )
+    return rows
+
+
+def safe_pct(part: float, whole: float) -> float:
+    """Share in percent, 0.0 when the denominator is zero. Keeps narratives free of NaN."""
+    return 0.0 if whole <= 0 else part / whole * 100.0
+
+
+def dominant(rows: Sequence[ClassShare]) -> ClassShare | None:
+    """The class with the largest area, or None when every class is empty.
+
+    Ties are broken by the order of `rows`, which follows the class code order in config. This
+    is deterministic but arbitrary. Exact ties are unlikely on real rasters.
+    """
+    present = [r for r in rows if r.area_ha > 0]
+    return max(present, key=lambda r: r.area_ha) if present else None
+
+
+def sort_by_area(rows: list) -> list:
+    """Sort any objects that carry `area_ha` descending. Dominant first, used in narratives."""
+    return sorted(rows, key=lambda r: r.area_ha, reverse=True)
+
+
+# ============================ SHARED MASKS ============================
+
+
+@dataclass(frozen=True)
+class ForestMask:
+    """The AOI forest at a single date, as a boolean array plus its area.
+
+    Produced here rather than passed between component results, so that 1.5, 1.6 and any later
+    module all use one definition of forest and one alignment.
+    """
+
+    mask: np.ndarray
+    pixel_area_ha: float
+    area_ha: float
+
+    @property
+    def is_empty(self) -> bool:
+        return self.area_ha <= 0
+
+
+def forest_mask_2024(aoi: AOI) -> ForestMask:
+    """Forest inside the AOI in 2024, Tier 1 to 2 natural forest only (Scenario 2A).
+
+    FOREST_CODES = [1, 6, 7, 8, 10] in the 20 class LC 2024 legend: flooded forest, mangrove,
+    deciduous, evergreen, mixed forest. Plantation classes (rubber, palm, forest plantation,
+    crop plantation) are not forest here, which is what keeps this consistent with the FC 2014
+    definition used in the backend trajectory work.
+    """
+    lc = load_raster_clipped(LC2024_RASTER, aoi, resampling="nearest")
+    mask = np.isin(lc.values.filled(-1), FOREST_CODES)
+    return ForestMask(
+        mask=mask,
+        pixel_area_ha=lc.pixel_area_ha,
+        area_ha=int(mask.sum()) * lc.pixel_area_ha,
+    )
+
+
+def forest_mask_2014(aoi: AOI) -> ForestMask:
+    """Forest inside the AOI in 2014, from the binary FC2014 layer.
+
+    FC2014 is already a binary product (1 = forest), so FC2014_FOREST_CODES = [1] is a raster
+    value, not an LC legend code. The Tier 1 to 2 rule was applied upstream when FC2014 was
+    built, so both dates carry the same forest definition.
+    """
+    fc = load_raster_clipped(FC2014_RASTER, aoi, resampling="nearest")
+    mask = np.isin(fc.values.filled(-1), FC2014_FOREST_CODES)
+    return ForestMask(
+        mask=mask,
+        pixel_area_ha=fc.pixel_area_ha,
+        area_ha=int(mask.sum()) * fc.pixel_area_ha,
+    )
+
+
+# ============================ VECTOR OVERLAY ============================
+
+
+def union_overlap_ha(aoi: AOI, features: gpd.GeoDataFrame) -> float:
+    """Area of the AOI covered by the union of `features`.
+
+    Union first, then intersect. Both WDPA (1.3) and KBA (2.2) contain sites that overlap or
+    nest inside each other, so adding per site areas can exceed the AOI. The union is the only
+    figure that can be reported as a share of the site.
+    """
+    if features.empty:
+        return 0.0
+    merged = features.geometry.union_all()
+    return float(aoi.geometry.intersection(merged).area.sum()) / M2_PER_HA
+
+
+def per_feature_overlap_ha(aoi: AOI, features: gpd.GeoDataFrame) -> np.ndarray:
+    """Per feature intersection area with the AOI, in the row order of `features`.
+
+    Used for the breakdown table only. These values may sum to more than the union area when
+    sites overlap, which is expected and is why the headline uses `union_overlap_ha`.
+    """
+    if features.empty:
+        return np.array([], dtype=float)
+    aoi_geom = aoi.geometry.iloc[0]
+    return np.array(
+        [geom.intersection(aoi_geom).area / M2_PER_HA for geom in features.geometry],
+        dtype=float,
+    )
+
+
+# ============================ NARRATIVE HELPERS ============================
+
+
+def fmt_ha(value: float) -> str:
+    """Hectares for prose. Thousands separator, no decimals. Screening precision, not cadastral."""
+    return f"{value:,.0f} ha"
+
+
+def fmt_pct(value: float, decimals: int = 0) -> str:
+    return f"{value:.{decimals}f}%"
+
+
+def oxford_join(items: Iterable[str]) -> str:
+    """Join a list into readable prose: "a", "a and b", "a, b, and c"."""
+    items = list(items)
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return f"{', '.join(items[:-1])}, and {items[-1]}"
+
+
+def sentences(*parts: str) -> str:
+    """Join non empty sentence fragments with a single space. Skips None and empty strings."""
+    return " ".join(p.strip() for p in parts if p)
+
+
+# ============================ RESULT BASE ============================
+
+
+@dataclass
+class ComponentResult:
+    """Common shape returned by every component.
+
+    `applicable` is False when the component has nothing to measure, for example FLII on an AOI
+    with no forest. The frontend still renders the card and shows `narrative`, so the absence of
+    a signal is visible rather than silently missing.
+    """
+
+    component: str
+    applicable: bool
+    narrative: str
+    tables: dict[str, list] = field(default_factory=dict)
+    values: dict[str, object] = field(default_factory=dict)
+    flags: list[str] = field(default_factory=list)
+
+
+def not_applicable(component: str, reason: str) -> ComponentResult:
+    return ComponentResult(component=component, applicable=False, narrative=reason)
+
+
+# ============================ RESULT HANDOFF ============================
+# Notebooks cannot import each other, because names like "F02-P2 General.ipynb" are not valid
+# Python module names. JSON on disk is the contract instead. Each notebook ends by calling
+# `save_results`, and any notebook that needs an earlier stage starts by calling `load_results`.
+# Side effect worth keeping: the contract becomes inspectable. A reviewer can open the JSON and
+# see exactly what one stage promises the next, without running anything.
+
+
+def to_jsonable(obj: object) -> object:
+    """Convert a result tree into plain JSON types.
+
+    Handles the four things that appear in results and that json cannot take directly:
+    dataclasses (ClassShare, AdminUnit, ProtectedSite, HazardCard, KbaSite), frozensets
+    (present_set from 1.1), numpy scalars, and numpy arrays.
+
+    Note the lossy step: `present_set` becomes a sorted list, so a consumer must not rely on
+    set semantics after a round trip. Downstream code should read it back with `set(...)`.
+    """
+    if is_dataclass(obj) and not isinstance(obj, type):
+        return {k: to_jsonable(v) for k, v in asdict(obj).items()}
+    if isinstance(obj, (set, frozenset)):
+        return sorted(obj, key=str)
+    if isinstance(obj, dict):
+        return {str(k): to_jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [to_jsonable(v) for v in obj]
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    return obj
+
+
+def result_path(aoi_id: str, stage: str) -> Path:
+    return Path(OUTPUT_DIR) / f"{aoi_id}__{stage}.json"
+
+
+def save_results(results: dict[str, ComponentResult], aoi: AOI, aoi_id: str, stage: str) -> Path:
+    """Write one stage of results to disk and return the path.
+
+    The AOI block is repeated in every stage file on purpose. It makes each file self describing,
+    so a stale file from a different AOI can be detected instead of silently mixed in.
+    """
+    path = result_path(aoi_id, stage)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "aoi_id": aoi_id,
+        "stage": stage,
+        "aoi": {
+            "area_ha": aoi.area_ha,
+            "source_crs": aoi.source_crs,
+            "reference_crs": REFERENCE_CRS,
+        },
+        "components": {k: to_jsonable(v) for k, v in results.items()},
+    }
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return path
+
+
+def load_results(aoi_id: str, stage: str) -> dict:
+    """Read one stage back. Returns the raw payload, not rehydrated dataclasses.
+
+    Downstream modules read `values` and `tables`, which are plain dicts and lists after the
+    round trip. Rebuilding the dataclasses would add a second definition of every result type
+    with no benefit, so it is deliberately not done.
+    """
+    path = result_path(aoi_id, stage)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Stage '{stage}' has not been run for AOI '{aoi_id}'. Expected {path}."
+        )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+
+    if payload.get("aoi_id") != aoi_id:
+        raise ValueError(
+            f"{path} belongs to AOI '{payload.get('aoi_id')}', not '{aoi_id}'."
+        )
+    return payload
+
+
+def component_values(payload: dict, component_key: str) -> dict:
+    """Shortcut for the common read: `component_values(general, "1.2")["dominant_country"]`."""
+    return payload["components"][component_key]["values"]
