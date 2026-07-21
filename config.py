@@ -61,6 +61,10 @@ KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
 AGB_RASTER = r"<SET: path to agb_mgha.tif>"   # aboveground biomass, Mg/ha
 BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # belowground biomass, Mg/ha
 
+# Soil organic carbon (Climate module, 3.2). Values are CARBON, tC/ha, not biomass and not CO2e.
+SOIL_CARBON_RASTER = r"<SET: path to soil_carbon.tif>"   # SOC stock, tC/ha
+SOIL_CARBON_DEPTH_CM = 30   # depth the raster represents; label every SOC figure with it
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 
