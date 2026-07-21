@@ -1,0 +1,13 @@
+name: nbs-screening
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - gdal
+  - numpy
+  - pandas
+  - geopandas
+  - rasterio
+  - shapely
+  - jupyterlab
+  - ipykernel
