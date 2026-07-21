@@ -89,6 +89,24 @@ def prepare_aoi(aoi_any_crs: gpd.GeoDataFrame | gpd.GeoSeries) -> AOI:
 
 # ============================ DATA ACCESS STUBS ============================
 # The only file touching code in the tool. Fill these to make the tool runnable.
+#
+# These four functions are also where the remaining dependencies enter. Nothing else in the
+# tool needs them, which is why `import rasterio` and `import pandas` do not appear above yet:
+#
+#   load_raster_clipped              rasterio, rasterio.mask, rasterio.warp
+#   load_vector_intersecting         geopandas (already imported)
+#   load_soil_class_table            pandas
+#   load_national_forest_risk_percentiles   pandas
+#
+# All of them are already declared in environment.yml, so filling the stubs needs no change to
+# the environment. Add the imports at the top of this file when you implement them.
+#
+# Resampling values passed by the components, and why each one is used:
+#   "nearest"   categorical rasters, and any layer whose minimum or maximum is reported, so the
+#               reported values exist in the source instead of being interpolation artefacts
+#   "average"   stock and probability layers, where reprojection must preserve the area
+#               weighted mean
+#   "bilinear"  continuous layers read only for their mean, currently the FLII score in 2.1
 
 
 @dataclass(frozen=True)
@@ -129,6 +147,15 @@ def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
     Returns an empty GeoDataFrame when nothing intersects, never None.
     """
     raise NotImplementedError("Data access stub. Wire to geopandas.")
+
+
+def load_soil_class_table(path: str) -> dict[int, str]:
+    """Map soil class raster codes to WRB group names, from a two column lookup table.
+
+    Returns {code: name}. Codes present in the raster but missing here are reported by 3.6 as
+    unmapped rather than dropped, so a lookup that falls behind the raster is visible.
+    """
+    raise NotImplementedError("Data access stub. Wire to SOIL_CLASS_TABLE.")
 
 
 def load_national_forest_risk_percentiles(country: str) -> dict[int, float] | None:

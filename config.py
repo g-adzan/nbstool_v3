@@ -42,9 +42,14 @@ HAZARD_RASTERS = {
     "landslide":  r"<SET: path to hazard_landslides.tif>",
     "flood":      r"<SET: path to hazard_flood.tif>",
     "flashflood": r"<SET: path to hazard_flashflood.tif>",
-    "fire":       r"<SET: path to hazard_fire.tif>",
+    "fire":       r"<SET: path to fire_hazard.tif>",
     "drought":    r"<SET: path to hazard_drought.tif>",
 }
+
+# Fire susceptibility (Climate module, 3.5). Deliberately an alias, not a second path: 1.7 and
+# 3.5 report the same raster in two different ways, so there must be only one path to set. If
+# these ever become two layers, split them here and say why in the 3.5 markdown cell.
+FIRE_HAZARD_RASTER = HAZARD_RASTERS["fire"]
 
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
@@ -54,6 +59,73 @@ FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
 KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
+
+# Biomass (Climate module, 3.1). Continuous rasters, DRY BIOMASS DENSITY in Mg/ha, not carbon.
+# AGB is the in-house layer (Alpha Earth + GEDI). The tool applies the carbon fraction and the
+# CO2 conversion itself, so both conversions stay visible here rather than hidden upstream.
+AGB_RASTER = r"<SET: path to agb_mgha.tif>"   # aboveground biomass, Mg/ha
+BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # belowground biomass, Mg/ha
+
+# Soil organic carbon (Climate module, 3.2). Values are CARBON, tC/ha, not biomass and not CO2e.
+SOIL_CARBON_RASTER = r"<SET: path to soil_carbon.tif>"   # SOC stock, tC/ha
+SOIL_CARBON_DEPTH_CM = 30   # depth the raster represents; label every SOC figure with it
+
+# WorldClim monthly climatology (Climate module, 3.3 and 3.4).
+# NOT current climate: v2.1 is a 1970-2000 normal. Every figure derived from it must be labelled
+# with the period, because mean temperature in SEA has risen since that window closed.
+WORLDCLIM_VERSION    = "2.1"
+WORLDCLIM_PERIOD     = "1970-2000"
+WORLDCLIM_RESOLUTION = "30s"   # about 1 km at the equator
+
+# Twelve files per variable, in calendar order January to December.
+WORLDCLIM_TAVG_RASTERS = [
+    rf"<SET: path to wc2.1_30s_tavg_{m:02d}.tif>" for m in range(1, 13)
+]   # monthly mean temperature, degrees Celsius
+WORLDCLIM_PREC_RASTERS = [
+    rf"<SET: path to wc2.1_30s_prec_{m:02d}.tif>" for m in range(1, 13)
+]   # monthly precipitation, mm
+
+MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# 3.3 and 3.4: below this many valid pixels the spatial range is not meaningful, because a
+# 30 arc-second grid gives a small AOI only a handful of cells.
+CLIMATE_MIN_PIXELS = 5
+
+# ---------------------------------------------------------------------------------------
+# Soil classification, WRB 2006 (Climate module, 3.6)
+# ---------------------------------------------------------------------------------------
+# One raster per WRB reference soil group, holding the modelled probability of that group on a
+# 0 to 100 scale. Across all groups the probabilities sum to 100 at every pixel, which is what
+# lets the component report a mean probability per group that also sums to 100.
+#
+# Class names below are the WRB 2006 reference soil groups used by SoilGrids. Note two spellings
+# to watch in the UI copy: it is Acrisols, not "Aricsols", and Nitisols, not "Nitsols".
+WRB_CLASSES = (
+    "Acrisols", "Albeluvisols", "Alisols", "Andosols", "Arenosols", "Calcisols", "Cambisols",
+    "Chernozems", "Cryosols", "Durisols", "Ferralsols", "Fluvisols", "Gleysols", "Gypsisols",
+    "Histosols", "Kastanozems", "Leptosols", "Lixisols", "Luvisols", "Nitisols", "Phaeozems",
+    "Planosols", "Plinthosols", "Podzols", "Regosols", "Solonchaks", "Solonetz", "Stagnosols",
+    "Umbrisols", "Vertisols",
+)
+
+WRB_PROBABILITY_RASTERS = {
+    cls: rf"<SET: path to wrb_{cls.lower()}_probability.tif>" for cls in WRB_CLASSES
+}
+
+# Interim input, available now: one categorical raster of soil class codes plus a lookup table
+# that maps each code to a WRB group name.
+SOIL_CLASS_RASTER = r"<SET: path to soil_class.tif>"        # categorical, WRB class codes
+SOIL_CLASS_TABLE  = r"<SET: path to soil_class_lookup.csv>" # columns: code, name
+
+# Which input 3.6 uses. "categorical" is the interim path and reports SHARE OF AREA.
+# "probability" is the target path and reports MEAN PROBABILITY. The two are different
+# quantities, so the component labels whichever it produced rather than calling both "%".
+WRB_MODE = "categorical"   # "categorical" or "probability"
+
+WRB_MIN_PROBABILITY_PCT = 1.0   # 3.6 drop groups below this mean probability from the list
+WRB_DISPLAY_TOP_N = 5           # 3.6 how many rows the frontend shows before "see the table"
+WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not sum to ~100
 
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
@@ -82,6 +154,11 @@ RISK_HIGHER_PCTL   = 60            # 1.6 above this national percentile is "high
 RISK_LOWER_PCTL    = 40            # 1.6 below this national percentile is "lower than"
 PROB_SCALE_MAX     = 65535         # 1.6 prob raster UInt16 encodes 0-100 as 0-65535
 HAZARD_PRESENCE_PCT = 20           # 1.7 representative level = highest class covering >= this % of AOI
+
+# Carbon conversion (3.1). Both steps are applied in the tool, not upstream.
+CARBON_FRACTION = 0.47             # IPCC 2006 GL Vol 4 Ch 4, default carbon fraction of dry matter
+CO2_PER_C = 44.0 / 12.0            # molecular weight ratio, tCO2e per tC
+CARBON_COVERAGE_WARN_PCT = 90.0    # 3.1 flag when the biomass raster covers less of the AOI
 
 # ============================ RESULT HANDOFF ============================
 # Each notebook writes its results here as JSON, and the next notebook reads them back. This is

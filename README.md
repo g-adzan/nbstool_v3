@@ -12,9 +12,9 @@ by other methods.
 
 Design stage, specified as **Jupyter notebooks that are not yet runnable**. All analysis logic
 is real Python: masking, tabulation, thresholds, narrative construction. Only file access is
-stubbed. The three stubs in `common.py` (`load_raster_clipped`, `load_vector_intersecting`,
-`load_national_forest_risk_percentiles`) raise `NotImplementedError`. Filling them is what makes
-the tool run; nothing else needs rewriting.
+stubbed. The four stubs in `common.py` (`load_raster_clipped`, `load_vector_intersecting`,
+`load_soil_class_table`, `load_national_forest_risk_percentiles`) raise `NotImplementedError`.
+Filling them is what makes the tool run; nothing else needs rewriting.
 
 Design rationale lives in the markdown cells next to each component, not in a separate document.
 
@@ -23,8 +23,8 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | Notebook               | Phase  | Status                              |
 | ---------------------- | ------ | ----------------------------------- |
 | `F02-P2 General.ipynb` | F02-P2 | done (1.1 to 1.7)                   |
-| `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA done; 2.3 pending |
-| `F02-P2 Climate.ipynb` | F02-P2 | next                                |
+| `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA done; 2.3 unspecified |
+| `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.6 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
 | `F02-P4 Pathway.ipynb` | F02-P4 | upcoming                            |
 | `F02-P5 Benefit.ipynb` | F02-P5 | upcoming                            |
@@ -60,6 +60,63 @@ Consequence to keep in mind: an equal-area projection preserves area but distort
 shape, increasingly so away from the equator. Every hectare figure in the tool is sound. Any
 future component that measures a distance, a perimeter, or a shape index must not use this CRS.
 
+## Open items
+
+Recorded here so they are not rediscovered later. Details sit in the relevant markdown cell.
+
+**Nature returns almost nothing for non-forest sites.** 2.1 FLII is a property of forest and
+returns not applicable without it; 2.2 KBA returns a negative sentence on most sites. A degraded
+grassland or a cropland targeted for planting therefore gets no ecological description from the
+whole module, which is exactly the site type where a RESTORE decision depends on the starting
+condition. Related: the reference ecosystem has five classes in the backend, but the only
+ecosystem quality metric here measures forest, so savanna and grassland have no equivalent.
+`F02-P2 Nature.ipynb`, cell 2.3.
+
+**2.3 was never specified.** Only the number is reserved. Candidates are listed in the notebook,
+none decided.
+
+**Soil sits in Climate.** 3.6 Soil Classification is an ecological component placed in the
+Climate notebook by the team. Nothing in the code depends on the notebook it lives in.
+
+**3.6 reports share of area, not probability, until the per-group rasters arrive.** `WRB_MODE`
+selects the input; `values["measure"]` says which quantity was produced. The UI must not print
+the word "probability" while the mode is `categorical`.
+
+**1.6 open questions**: percentile clamping at p90, the median hiding the deforestation
+frontier, an AOI median compared against a table of pixel percentiles, and comparability across
+separately fitted regional models.
+
+**1.3 and 1.7 disagree on how to render absence.** 1.3 renders nothing when there is no
+protected area; 1.7 always shows five hazard cards so that absence stays visible.
+
+**1.1 has an eighth case.** An AOI with no mapped ecosystem has no Axis 3 reference, so the
+pathway module cannot run on it. Handled with a default narrative and a flag, not resolved.
+
+**Soil glosses need a soil scientist's review** before publication.
+
+## Dependencies
+
+`environment.yml` builds the `nbs-screening` conda environment. Every package it lists is there
+for a reason, and the list is already complete for the finished tool, not only for what runs
+today:
+
+| Package | Used by |
+|---|---|
+| `numpy` | all array work: masks, tabulation, stacking, medians |
+| `geopandas`, `shapely` | AOI handling, `prepare_aoi`, all vector overlay (1.2, 1.3, 2.2) |
+| `rasterio`, `gdal` | `load_raster_clipped`, once the stub is implemented |
+| `pandas` | `load_soil_class_table` and `load_national_forest_risk_percentiles` |
+| `jupyterlab`, `ipykernel` | running the notebooks |
+
+`rasterio` and `pandas` are not imported anywhere yet. They are the dependencies of the four
+data access stubs in `common.py`, which lists exactly which stub needs which package. Filling
+the stubs therefore needs no change to the environment.
+
+Not included, and a decision to make: **`matplotlib` is absent**, because the notebooks build no
+plots. Every chart is emitted as data in `tables` and drawn by the frontend. If you want to
+preview the bar charts inside the notebooks while developing, add `matplotlib` to
+`environment.yml` and a plotting cell per component.
+
 ## Data inputs
 
 All pre-defined layer paths and locked constants live in `config.py`. Set every path marked
@@ -72,6 +129,8 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
   narrative helpers, `ComponentResult`, result handoff (`save_results` / `load_results`)
 - `F02-P2 General.ipynb` - components 1.1 to 1.7
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
+- `F02-P2 Climate.ipynb` - components 3.1 to 3.6
+- `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
 - `outputs/` - per stage result JSON, written at run time
 - `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
   conversion is reviewed, then to be deleted
