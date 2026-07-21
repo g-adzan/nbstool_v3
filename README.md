@@ -60,40 +60,6 @@ Consequence to keep in mind: an equal-area projection preserves area but distort
 shape, increasingly so away from the equator. Every hectare figure in the tool is sound. Any
 future component that measures a distance, a perimeter, or a shape index must not use this CRS.
 
-## Open items
-
-Recorded here so they are not rediscovered later. Details sit in the relevant markdown cell.
-
-**Nature returns almost nothing for non-forest sites.** 2.1 FLII is a property of forest and
-returns not applicable without it; 2.2 KBA returns a negative sentence on most sites. A degraded
-grassland or a cropland targeted for planting therefore gets no ecological description from the
-whole module, which is exactly the site type where a RESTORE decision depends on the starting
-condition. Related: the reference ecosystem has five classes in the backend, but the only
-ecosystem quality metric here measures forest, so savanna and grassland have no equivalent.
-`F02-P2 Nature.ipynb`, cell 2.3.
-
-**2.3 was never specified.** Only the number is reserved. Candidates are listed in the notebook,
-none decided.
-
-**Soil sits in Climate.** 3.6 Soil Classification is an ecological component placed in the
-Climate notebook by the team. Nothing in the code depends on the notebook it lives in.
-
-**3.6 reports share of area, not probability, until the per-group rasters arrive.** `WRB_MODE`
-selects the input; `values["measure"]` says which quantity was produced. The UI must not print
-the word "probability" while the mode is `categorical`.
-
-**1.6 open questions**: percentile clamping at p90, the median hiding the deforestation
-frontier, an AOI median compared against a table of pixel percentiles, and comparability across
-separately fitted regional models.
-
-**1.3 and 1.7 disagree on how to render absence.** 1.3 renders nothing when there is no
-protected area; 1.7 always shows five hazard cards so that absence stays visible.
-
-**1.1 has an eighth case.** An AOI with no mapped ecosystem has no Axis 3 reference, so the
-pathway module cannot run on it. Handled with a default narrative and a flag, not resolved.
-
-**Soil glosses need a soil scientist's review** before publication.
-
 ## Dependencies
 
 `environment.yml` builds the `nbs-screening` conda environment. Every package it lists is there
