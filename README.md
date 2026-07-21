@@ -60,6 +60,29 @@ Consequence to keep in mind: an equal-area projection preserves area but distort
 shape, increasingly so away from the equator. Every hectare figure in the tool is sound. Any
 future component that measures a distance, a perimeter, or a shape index must not use this CRS.
 
+## Dependencies
+
+`environment.yml` builds the `nbs-screening` conda environment. Every package it lists is there
+for a reason, and the list is already complete for the finished tool, not only for what runs
+today:
+
+| Package | Used by |
+|---|---|
+| `numpy` | all array work: masks, tabulation, stacking, medians |
+| `geopandas`, `shapely` | AOI handling, `prepare_aoi`, all vector overlay (1.2, 1.3, 2.2) |
+| `rasterio`, `gdal` | `load_raster_clipped`, once the stub is implemented |
+| `pandas` | `load_soil_class_table` and `load_national_forest_risk_percentiles` |
+| `jupyterlab`, `ipykernel` | running the notebooks |
+
+`rasterio` and `pandas` are not imported anywhere yet. They are the dependencies of the four
+data access stubs in `common.py`, which lists exactly which stub needs which package. Filling
+the stubs therefore needs no change to the environment.
+
+Not included, and a decision to make: **`matplotlib` is absent**, because the notebooks build no
+plots. Every chart is emitted as data in `tables` and drawn by the frontend. If you want to
+preview the bar charts inside the notebooks while developing, add `matplotlib` to
+`environment.yml` and a plotting cell per component.
+
 ## Data inputs
 
 All pre-defined layer paths and locked constants live in `config.py`. Set every path marked
