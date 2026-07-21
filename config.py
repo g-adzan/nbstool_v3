@@ -147,6 +147,8 @@ PATHWAY_CODES = {
     5: "Not eligible for NBS",
 }
 
+PROTECT_CODE = 1   # named because F02-P5 selects on it; the other codes are only tabulated
+
 # Codes 1 to 3 are the actual NBS pathways. Codes 4 and 5 are screening outcomes that sit in the
 # same band: 4 means non carbon options may still exist, 5 means no NBS option at all.
 PATHWAY_ELIGIBLE_CODES = (1, 2, 3)
@@ -163,6 +165,26 @@ PATHWAY_ECOSYSTEM_CODES = {
 }
 
 PATHWAY_UNCLASSIFIED_WARN_PCT = 20.0   # 4.1 flag when this much of the AOI carries no pathway
+
+# ---------------------------------------------------------------------------------------
+# Benefit quantification (F02-P5)
+# ---------------------------------------------------------------------------------------
+# 5.1 reads no new layer. It combines three layers that other components already declare:
+# PATHWAY_RASTER (which pixels are Protect), PROB_RASTER (how the projected loss is placed),
+# and AGB_RASTER / BGB_RASTER (how much carbon each of those pixels holds).
+
+# The historical rate in 1.5 is measured over 2014 to 2024. Projecting it further than the
+# window it was measured in is the largest assumption in the whole calculation, so 5.1 flags a
+# project duration above this. VM0048 requires a baseline to be reassessed every six years for
+# the same reason. The tool still returns a full figure; it does not truncate.
+BASELINE_RATE_MAX_YEARS = 10
+
+# 5.1 flag when the risk layer covers less than this share of the Protect area. Protect pixels
+# without a risk value cannot receive projected loss, so they drop out of the estimate.
+PROTECT_RISK_COVERAGE_WARN_PCT = 90.0
+
+# Reference ecosystem code (pathway band 3) whose carbon is dominated by a pool 5.1 cannot see.
+PATHWAY_ECOSYSTEM_PEATLAND = 3
 
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
