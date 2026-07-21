@@ -65,6 +65,28 @@ BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # belowground biomass, Mg/ha
 SOIL_CARBON_RASTER = r"<SET: path to soil_carbon.tif>"   # SOC stock, tC/ha
 SOIL_CARBON_DEPTH_CM = 30   # depth the raster represents; label every SOC figure with it
 
+# WorldClim monthly climatology (Climate module, 3.3 and 3.4).
+# NOT current climate: v2.1 is a 1970-2000 normal. Every figure derived from it must be labelled
+# with the period, because mean temperature in SEA has risen since that window closed.
+WORLDCLIM_VERSION    = "2.1"
+WORLDCLIM_PERIOD     = "1970-2000"
+WORLDCLIM_RESOLUTION = "30s"   # about 1 km at the equator
+
+# Twelve files per variable, in calendar order January to December.
+WORLDCLIM_TAVG_RASTERS = [
+    rf"<SET: path to wc2.1_30s_tavg_{m:02d}.tif>" for m in range(1, 13)
+]   # monthly mean temperature, degrees Celsius
+WORLDCLIM_PREC_RASTERS = [
+    rf"<SET: path to wc2.1_30s_prec_{m:02d}.tif>" for m in range(1, 13)
+]   # monthly precipitation, mm
+
+MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# 3.3 and 3.4: below this many valid pixels the spatial range is not meaningful, because a
+# 30 arc-second grid gives a small AOI only a handful of cells.
+CLIMATE_MIN_PIXELS = 5
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 

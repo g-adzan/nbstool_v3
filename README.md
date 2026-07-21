@@ -24,7 +24,7 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | ---------------------- | ------ | ----------------------------------- |
 | `F02-P2 General.ipynb` | F02-P2 | done (1.1 to 1.7)                   |
 | `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA done; 2.3 pending |
-| `F02-P2 Climate.ipynb` | F02-P2 | 3.1 biomass, 3.2 soil carbon done    |
+| `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.4 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
 | `F02-P4 Pathway.ipynb` | F02-P4 | upcoming                            |
 | `F02-P5 Benefit.ipynb` | F02-P5 | upcoming                            |
@@ -72,7 +72,7 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
   narrative helpers, `ComponentResult`, result handoff (`save_results` / `load_results`)
 - `F02-P2 General.ipynb` - components 1.1 to 1.7
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
-- `F02-P2 Climate.ipynb` - components 3.1 and 3.2
+- `F02-P2 Climate.ipynb` - components 3.1 to 3.4
 - `outputs/` - per stage result JSON, written at run time
 - `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
   conversion is reviewed, then to be deleted
