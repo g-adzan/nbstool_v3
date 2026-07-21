@@ -55,6 +55,12 @@ FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
 KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
 
+# Biomass (Climate module, 3.1). Continuous rasters, DRY BIOMASS DENSITY in Mg/ha, not carbon.
+# AGB is the in-house layer (Alpha Earth + GEDI). The tool applies the carbon fraction and the
+# CO2 conversion itself, so both conversions stay visible here rather than hidden upstream.
+AGB_RASTER = r"<SET: path to agb_mgha.tif>"   # aboveground biomass, Mg/ha
+BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # belowground biomass, Mg/ha
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 
@@ -82,6 +88,11 @@ RISK_HIGHER_PCTL   = 60            # 1.6 above this national percentile is "high
 RISK_LOWER_PCTL    = 40            # 1.6 below this national percentile is "lower than"
 PROB_SCALE_MAX     = 65535         # 1.6 prob raster UInt16 encodes 0-100 as 0-65535
 HAZARD_PRESENCE_PCT = 20           # 1.7 representative level = highest class covering >= this % of AOI
+
+# Carbon conversion (3.1). Both steps are applied in the tool, not upstream.
+CARBON_FRACTION = 0.47             # IPCC 2006 GL Vol 4 Ch 4, default carbon fraction of dry matter
+CO2_PER_C = 44.0 / 12.0            # molecular weight ratio, tCO2e per tC
+CARBON_COVERAGE_WARN_PCT = 90.0    # 3.1 flag when the biomass raster covers less of the AOI
 
 # ============================ RESULT HANDOFF ============================
 # Each notebook writes its results here as JSON, and the next notebook reads them back. This is
