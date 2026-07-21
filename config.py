@@ -186,6 +186,13 @@ PROTECT_RISK_COVERAGE_WARN_PCT = 90.0
 # Reference ecosystem code (pathway band 3) whose carbon is dominated by a pool 5.1 cannot see.
 PATHWAY_ECOSYSTEM_PEATLAND = 3
 
+# The word 5.1 puts in its narrative for each reference ecosystem. Only three of the five band 3
+# classes appear, and that is not an omission: prob.tif is forest masked upstream, so Protect
+# pixels on grassland or savanna (code 4) and on water or other (code 0) carry no risk value and
+# never enter the Protect pool. A pool pixel outside this mapping means the risk layer and the
+# ecosystem band disagree about what is forest, which 5.1 raises as a flag.
+PROTECT_ECOSYSTEM_WORDS = {1: "forest", 2: "mangrove", 3: "peatland"}
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 
