@@ -131,6 +131,15 @@ def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
     raise NotImplementedError("Data access stub. Wire to geopandas.")
 
 
+def load_soil_class_table(path: str) -> dict[int, str]:
+    """Map soil class raster codes to WRB group names, from a two column lookup table.
+
+    Returns {code: name}. Codes present in the raster but missing here are reported by 3.6 as
+    unmapped rather than dropped, so a lookup that falls behind the raster is visible.
+    """
+    raise NotImplementedError("Data access stub. Wire to SOIL_CLASS_TABLE.")
+
+
 def load_national_forest_risk_percentiles(country: str) -> dict[int, float] | None:
     """Percentile breakpoints of national forest deforestation risk, on the 0 to 100 scale.
 

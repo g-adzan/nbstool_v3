@@ -92,6 +92,41 @@ MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
 # 30 arc-second grid gives a small AOI only a handful of cells.
 CLIMATE_MIN_PIXELS = 5
 
+# ---------------------------------------------------------------------------------------
+# Soil classification, WRB 2006 (Climate module, 3.6)
+# ---------------------------------------------------------------------------------------
+# One raster per WRB reference soil group, holding the modelled probability of that group on a
+# 0 to 100 scale. Across all groups the probabilities sum to 100 at every pixel, which is what
+# lets the component report a mean probability per group that also sums to 100.
+#
+# Class names below are the WRB 2006 reference soil groups used by SoilGrids. Note two spellings
+# to watch in the UI copy: it is Acrisols, not "Aricsols", and Nitisols, not "Nitsols".
+WRB_CLASSES = (
+    "Acrisols", "Albeluvisols", "Alisols", "Andosols", "Arenosols", "Calcisols", "Cambisols",
+    "Chernozems", "Cryosols", "Durisols", "Ferralsols", "Fluvisols", "Gleysols", "Gypsisols",
+    "Histosols", "Kastanozems", "Leptosols", "Lixisols", "Luvisols", "Nitisols", "Phaeozems",
+    "Planosols", "Plinthosols", "Podzols", "Regosols", "Solonchaks", "Solonetz", "Stagnosols",
+    "Umbrisols", "Vertisols",
+)
+
+WRB_PROBABILITY_RASTERS = {
+    cls: rf"<SET: path to wrb_{cls.lower()}_probability.tif>" for cls in WRB_CLASSES
+}
+
+# Interim input, available now: one categorical raster of soil class codes plus a lookup table
+# that maps each code to a WRB group name.
+SOIL_CLASS_RASTER = r"<SET: path to soil_class.tif>"        # categorical, WRB class codes
+SOIL_CLASS_TABLE  = r"<SET: path to soil_class_lookup.csv>" # columns: code, name
+
+# Which input 3.6 uses. "categorical" is the interim path and reports SHARE OF AREA.
+# "probability" is the target path and reports MEAN PROBABILITY. The two are different
+# quantities, so the component labels whichever it produced rather than calling both "%".
+WRB_MODE = "categorical"   # "categorical" or "probability"
+
+WRB_MIN_PROBABILITY_PCT = 1.0   # 3.6 drop groups below this mean probability from the list
+WRB_DISPLAY_TOP_N = 5           # 3.6 how many rows the frontend shows before "see the table"
+WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not sum to ~100
+
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
 
