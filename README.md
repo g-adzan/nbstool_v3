@@ -10,11 +10,12 @@ by other methods.
 
 ## Status
 
-Design stage, specified as **Jupyter notebooks that are not yet runnable**. All analysis logic
-is real Python: masking, tabulation, thresholds, narrative construction. Only file access is
-stubbed. The four stubs in `common.py` (`load_raster_clipped`, `load_vector_intersecting`,
-`load_soil_class_table`, `load_national_forest_risk_percentiles`) raise `NotImplementedError`.
-Filling them is what makes the tool run; nothing else needs rewriting.
+All analysis logic is real Python: masking, tabulation, thresholds, narrative construction. File
+access sits in a few stubs in `common.py`. `load_raster_clipped` is implemented (rasterio warp,
+clip and polygon mask to the reference CRS), so the raster-only notebooks, including
+`F02-P4 Pathway`, run once their paths are set in `config.py`. Three stubs remain and raise
+`NotImplementedError` until the notebooks that need them are run: `load_vector_intersecting`,
+`load_soil_class_table`, `load_national_forest_risk_percentiles`.
 
 Design rationale lives in the markdown cells next to each component, not in a separate document.
 

@@ -33,6 +33,19 @@ from typing import Iterable, Sequence
 
 import geopandas as gpd
 import numpy as np
+import rasterio
+from affine import Affine
+from rasterio.features import geometry_mask
+from rasterio.warp import Resampling, calculate_default_transform, reproject
+
+# Resampling names the components pass, mapped to rasterio. nearest for categorical layers and
+# any layer whose min or max is reported; average for stock and probability; bilinear for a
+# continuous layer read only for its mean (the FLII score in 2.1).
+_RESAMPLING = {
+    "nearest": Resampling.nearest,
+    "bilinear": Resampling.bilinear,
+    "average": Resampling.average,
+}
 
 from config import (
     FC2014_RASTER,
@@ -113,12 +126,15 @@ def prepare_aoi(aoi_any_crs: gpd.GeoDataFrame | gpd.GeoSeries) -> AOI:
 class RasterSlice:
     """A raster clipped and reprojected to the AOI in REFERENCE_CRS.
 
-    values : masked integer or float array. Masked cells are nodata or outside the AOI.
+    values : masked float array. Masked cells are nodata or outside the AOI polygon.
     pixel_area_ha : constant, because REFERENCE_CRS is equal area.
+    transform, crs : the destination grid, so another load can be forced onto it with `like`.
     """
 
     values: np.ma.MaskedArray
     pixel_area_ha: float
+    transform: object = None   # affine.Affine of the destination grid
+    crs: object = None         # REFERENCE_CRS
 
     @property
     def valid_count(self) -> int:
@@ -155,7 +171,57 @@ def load_raster_clipped(
     Returns an all masked array when the raster does not cover the AOI at all. Components
     handle that as "not applicable", not as an error.
     """
-    raise NotImplementedError("Data access stub. Wire to rasterio.")
+    rs = _RESAMPLING[resampling]
+    geom = aoi.geometry.iloc[0]  # single dissolved polygon, already in REFERENCE_CRS
+
+    with rasterio.open(path) as src:
+        if like is not None:
+            # Force the exact grid of an earlier slice, so pixels line up one to one.
+            dst_transform = like.transform
+            dst_h, dst_w = like.values.shape
+        else:
+            # Destination grid = source resolution carried into REFERENCE_CRS, cropped to the
+            # AOI bounding box so only the AOI window is warped, not the whole SEA raster.
+            base_transform, _, _ = calculate_default_transform(
+                src.crs, REFERENCE_CRS, src.width, src.height, *src.bounds
+            )
+            minx, miny, maxx, maxy = geom.bounds
+            inv = ~base_transform
+            c0, r0 = inv * (minx, maxy)
+            c1, r1 = inv * (maxx, miny)
+            col_off, row_off = int(np.floor(c0)), int(np.floor(r0))
+            dst_w = max(1, int(np.ceil(c1)) - col_off)
+            dst_h = max(1, int(np.ceil(r1)) - row_off)
+            dst_transform = base_transform * Affine.translation(col_off, row_off)
+
+        # NaN fill separates "no source coverage" from a genuine 0 in a categorical raster.
+        fill = float(src.nodata) if src.nodata is not None else np.nan
+        dst = np.full((dst_h, dst_w), fill, dtype="float64")
+        reproject(
+            source=rasterio.band(src, band),
+            destination=dst,
+            src_transform=src.transform,
+            src_crs=src.crs,
+            dst_transform=dst_transform,
+            dst_crs=REFERENCE_CRS,
+            src_nodata=src.nodata,
+            dst_nodata=fill,
+            resampling=rs,
+        )
+        src_nodata = src.nodata
+
+    # Mask everything outside the AOI polygon, then everything with no source value.
+    outside = geometry_mask(
+        [geom.__geo_interface__], out_shape=(dst_h, dst_w),
+        transform=dst_transform, invert=False,  # True where a pixel is OUTSIDE the polygon
+    )
+    nodata_mask = np.isnan(dst) if src_nodata is None else (dst == src_nodata)
+    values = np.ma.masked_array(dst, mask=(outside | nodata_mask))
+
+    pixel_area_ha = abs(dst_transform.a * dst_transform.e) / M2_PER_HA
+    return RasterSlice(
+        values=values, pixel_area_ha=pixel_area_ha, transform=dst_transform, crs=REFERENCE_CRS
+    )
 
 
 def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:

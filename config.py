@@ -135,20 +135,20 @@ WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not s
 # v3 drops the secondary pathway entirely, moves the ecosystem to band 2, and puts the 17 class
 # category index in band 3. Reading a v2 raster with these constants, or the reverse, silently
 # swaps ecosystem and cat_code.
-PATHWAY_RASTER = r"<SET: path to pathway.tif>"
+PATHWAY_RASTER = r"E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif"
 
 PATHWAY_BAND           = 1   # primary pathway, exactly one value per pixel
 PATHWAY_ECOSYSTEM_BAND = 2   # reference ecosystem, passed through for activity selection
 PATHWAY_CATCODE_BAND   = 3   # 1..17 canonical_v3 category index, passed through for activities
 
-# Band 1. Code 5 "Not eligible for NBS" from v2 is GONE: settlement now folds into 4
-# Carbon ineligible. So codes are 0 to 4 only.
+# Band 1. Code 5 "Not eligible for NBS" from v2 is GONE: settlement now folds into 4 Ineligible.
+# So codes are 0 to 4 only.
 PATHWAY_CODES = {
     0: "No data",
     1: "Protect",
     2: "Manage",
     3: "Restore",
-    4: "Carbon ineligible",
+    4: "Ineligible",
 }
 
 PROTECT_CODE = 1   # named because F02-P5 selects on it; the other codes are only tabulated
