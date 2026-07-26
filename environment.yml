@@ -1,13 +1,44 @@
+# NBS screening tool environment.
+#
+# Create it (Anaconda Prompt, from this folder):
+#
+#   conda config --set channel_priority strict
+#   conda config --set remote_max_retries 10
+#   conda config --set remote_backoff_factor 2
+#   conda config --set remote_read_timeout_secs 120
+#   conda config --set fetch_threads 1
+#   conda env create -f environment.yml
+#   conda activate nbs-screening
+#   python -m ipykernel install --user --name nbs-screening --display-name "Python (nbs-screening)"
+#
+# Then launch Jupyter and pick the "Python (nbs-screening)" kernel:
+#
+#   jupyter lab
+#
+# If a download is reset part way (ConnectionResetError 10054), just run
+# `conda env create -f environment.yml` again: conda keeps already downloaded
+# packages in its cache and only fetches what is missing.
+#
+# conda-forge only, strict priority, is the single most reliable way to install
+# the geospatial stack. Mixing the defaults channel is the usual cause of gdal
+# and rasterio conflicts.
+
 name: nbs-screening
+
 channels:
   - conda-forge
+  - nodefaults
+
 dependencies:
   - python=3.11
+  # geospatial stack (the reason this is conda, not pip)
   - gdal
+  - rasterio
+  - geopandas      # pulls shapely, fiona, pyproj
+  - shapely
+  # analysis
   - numpy
   - pandas
-  - geopandas
-  - rasterio
-  - shapely
+  # notebooks
   - jupyterlab
   - ipykernel

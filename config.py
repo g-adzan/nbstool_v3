@@ -128,43 +128,93 @@ WRB_DISPLAY_TOP_N = 5           # 3.6 how many rows the frontend shows before "s
 WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not sum to ~100
 
 # ---------------------------------------------------------------------------------------
-# Pathway assignment (F02-P4)
+# Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
 # ---------------------------------------------------------------------------------------
-# One raster, three bands, produced by the pathway assignment script. See
-# "NBS Pathway Assignment Framework" for the decision matrix behind the codes.
-PATHWAY_RASTER = r"<SET: path to pathway.tif>"
+# One raster, three bands, produced by nbs_trajectory_pathway_v3.js. This is the v3 band layout
+# and it is NOT the v2 layout: v2 band 2 was a secondary pathway and band 3 was the ecosystem.
+# v3 drops the secondary pathway entirely, moves the ecosystem to band 2, and puts the 17 class
+# category index in band 3. Reading a v2 raster with these constants, or the reverse, silently
+# swaps ecosystem and cat_code.
+PATHWAY_RASTER = r"E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif"
 
 PATHWAY_BAND           = 1   # primary pathway, exactly one value per pixel
-PATHWAY_SECONDARY_BAND = 2   # supporting pathway, same codes, 0 = none
-PATHWAY_ECOSYSTEM_BAND = 3   # reference ecosystem, passed through for activity selection
+PATHWAY_ECOSYSTEM_BAND = 2   # reference ecosystem, passed through for activity selection
+PATHWAY_CATCODE_BAND   = 3   # 1..17 canonical_v3 category index, passed through for activities
 
+# Band 1. Code 5 "Not eligible for NBS" from v2 is GONE: settlement now folds into 4 Ineligible.
+# So codes are 0 to 4 only.
 PATHWAY_CODES = {
     0: "No data",
     1: "Protect",
     2: "Manage",
     3: "Restore",
-    4: "Carbon ineligible",
-    5: "Not eligible for NBS",
+    4: "Ineligible",
 }
 
 PROTECT_CODE = 1   # named because F02-P5 selects on it; the other codes are only tabulated
 
-# Codes 1 to 3 are the actual NBS pathways. Codes 4 and 5 are screening outcomes that sit in the
-# same band: 4 means non carbon options may still exist, 5 means no NBS option at all.
+# Codes 1 to 3 are the actual NBS pathways. Code 4 is a screening outcome in the same band:
+# the site cannot generate carbon credits, though non carbon options may still exist.
 PATHWAY_ELIGIBLE_CODES = (1, 2, 3)
 
-# Reference ecosystem band. Five classes, unlike the three class ecosystem layer used by 1.1.
-# The two are not interchangeable: this one separates grassland and savanna, which is what makes
-# the savanna guardrail work at the activity level.
+# Band 2, reference ecosystem. Four classes plus none. Not the three class layer used by 1.1;
+# the two are not interchangeable, this one carries savanna, which is what makes the savanna
+# guardrail work at the activity level.
 PATHWAY_ECOSYSTEM_CODES = {
-    0: "Water or other",
+    0: "None",
     1: "Dryland forest",
     2: "Mangrove",
     3: "Peatland",
-    4: "Grassland or savanna",
+    4: "Savanna",
+}
+
+# Band 3, canonical_v3 category index. 17 categories as a clean 1..17 index, 0 mask. This is the
+# join key, together with the ecosystem band, into the canonical_v3_activities table (F02-P5).
+PATHWAY_CATCODE_LABELS = {
+    0: "Mask",
+    1: "Cat 1",  2: "Cat 2",  3: "Cat 3A", 4: "Cat 3B", 5: "Cat 4A", 6: "Cat 4B",
+    7: "Cat 5",  8: "Cat 6",  9: "Cat 7",  10: "Cat 8A", 11: "Cat 8B", 12: "Cat 8C",
+    13: "Cat 9A", 14: "Cat 9B", 15: "Cat 9C", 16: "Cat 9D", 17: "Cat 10",
 }
 
 PATHWAY_UNCLASSIFIED_WARN_PCT = 20.0   # 4.1 flag when this much of the AOI carries no pathway
+
+# Primary pathway per canonical_v3 category. Lets 4.2 label the pathway of a category and know
+# which categories are Ineligible (pathway 4) and therefore carry no activity by design.
+PATHWAY_CATCODE_TO_PATHWAY = {
+    1: 1,   # Cat 1  Protect
+    2: 4,   # Cat 2  Ineligible
+    3: 4,   # Cat 3A Ineligible (savanna)
+    4: 3,   # Cat 3B Restore
+    5: 4,   # Cat 4A Ineligible (savanna)
+    6: 3,   # Cat 4B Restore
+    7: 3,   # Cat 5  Restore
+    8: 2,   # Cat 6  Manage
+    9: 4,   # Cat 7  Ineligible
+    10: 4,  # Cat 8A Ineligible (stable natural savanna)
+    11: 2,  # Cat 8B Manage
+    12: 3,  # Cat 8C Restore
+    13: 2,  # Cat 9A Manage
+    14: 3,  # Cat 9B Restore
+    15: 2,  # Cat 9C Manage
+    16: 4,  # Cat 9D Ineligible (settlement)
+    17: 3,  # Cat 10 Restore
+}
+
+# ---------------------------------------------------------------------------------------
+# Activity catalog, canonical_v3_activities (F02-P4, component 4.2)
+# ---------------------------------------------------------------------------------------
+# The activity + Triple Win benefit + carbon QB layer, joined to the pathway raster on the pair
+# (cat_code, ecosystem). Source of truth is the "NBS Pathway Logic" Google Sheet, tab
+# canonical_v3_activities; the CSV below is a direct export of it, kept in the repo.
+#
+# `load_activity_table` reads the Sheet's own headers: `Cat_ID` (1..17, the join key = band 3),
+# `Ecosystem` as TEXT (Dryland Forest / Mangrove / Peatland / Savanna, mapped to the band-2
+# integer 1..4), `Activity ID`, `Activity`, `Benefit Nature/People/Climate`, and
+# `QB Avoided Emissions` / `QB Carbon Sequestration` (Yes/No). The 6 ineligible categories appear
+# with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
+# To update, re-export the tab over this file.
+ACTIVITY_TABLE = r"C:\Users\carbo\Documents\Claude\Projects\NBS Tool\nbs_screening_tool\canonical_v3_activities.csv"
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
