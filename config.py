@@ -219,28 +219,45 @@ ACTIVITY_TABLE = r"C:\Users\carbo\Documents\Claude\Projects\NBS Tool\nbs_screeni
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
 # ---------------------------------------------------------------------------------------
-# 5.1 reads no new layer. It combines three layers that other components already declare:
-# PATHWAY_RASTER (which pixels are Protect), PROB_RASTER (how the projected loss is placed),
-# and AGB_RASTER / BGB_RASTER (how much carbon each of those pixels holds).
+
+# 5.1 General Benefit. The three ASEAN Triple Win pillars, in the order the tool reports them.
+# The keys match the three benefit columns of canonical_v3_activities, mapped to the pillar name
+# used across the GUI Phase 5 (Triple Win adoption, May 2026). 5.1 collects the benefit phrases
+# each activity declares, groups them under these pillars, and merges the duplicates.
+TRIPLE_WIN_PILLARS = {
+    "benefit_nature":  "Forestry, Ecosystem Health and Biodiversity",
+    "benefit_people":  "People and Communities",
+    "benefit_climate": "Climate Resilience and Mitigation",
+}
+
+# 5.1 reports every benefit that occurs, however small the area behind it, and ranks them by
+# supporting area instead of dropping any. This is the denominator warning threshold only: a
+# flag, not a filter, when a benefit is carried by less than this share of the AOI.
+BENEFIT_SLIVER_WARN_PCT = 1.0
+
+# 5.2 Avoided Emissions from Unplanned Deforestation reads no new layer. It combines three
+# layers that other components already declare: PATHWAY_RASTER (which pixels are Protect),
+# PROB_RASTER (how the projected loss is placed), and AGB_RASTER / BGB_RASTER (how much carbon
+# each of those pixels holds).
 
 # The historical rate in 1.5 is measured over 2014 to 2024. Projecting it further than the
-# window it was measured in is the largest assumption in the whole calculation, so 5.1 flags a
+# window it was measured in is the largest assumption in the whole calculation, so 5.2 flags a
 # project duration above this. VM0048 requires a baseline to be reassessed every six years for
 # the same reason. The tool still returns a full figure; it does not truncate.
 BASELINE_RATE_MAX_YEARS = 10
 
-# 5.1 flag when the risk layer covers less than this share of the Protect area. Protect pixels
+# 5.2 flag when the risk layer covers less than this share of the Protect area. Protect pixels
 # without a risk value cannot receive projected loss, so they drop out of the estimate.
 PROTECT_RISK_COVERAGE_WARN_PCT = 90.0
 
-# Reference ecosystem code (pathway band 3) whose carbon is dominated by a pool 5.1 cannot see.
+# Reference ecosystem code (pathway band 3) whose carbon is dominated by a pool 5.2 cannot see.
 PATHWAY_ECOSYSTEM_PEATLAND = 3
 
-# The word 5.1 puts in its narrative for each reference ecosystem. Only three of the five band 3
+# The word 5.2 puts in its narrative for each reference ecosystem. Only three of the five band 3
 # classes appear, and that is not an omission: prob.tif is forest masked upstream, so Protect
 # pixels on grassland or savanna (code 4) and on water or other (code 0) carry no risk value and
 # never enter the Protect pool. A pool pixel outside this mapping means the risk layer and the
-# ecosystem band disagree about what is forest, which 5.1 raises as a flag.
+# ecosystem band disagree about what is forest, which 5.2 raises as a flag.
 PROTECT_ECOSYSTEM_WORDS = {1: "forest", 2: "mangrove", 3: "peatland"}
 
 # ============================ CLASS CODES AND LABELS ============================
