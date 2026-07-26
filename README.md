@@ -10,11 +10,12 @@ by other methods.
 
 ## Status
 
-Design stage, specified as **Jupyter notebooks that are not yet runnable**. All analysis logic
-is real Python: masking, tabulation, thresholds, narrative construction. Only file access is
-stubbed. The four stubs in `common.py` (`load_raster_clipped`, `load_vector_intersecting`,
-`load_soil_class_table`, `load_national_forest_risk_percentiles`) raise `NotImplementedError`.
-Filling them is what makes the tool run; nothing else needs rewriting.
+All analysis logic is real Python: masking, tabulation, thresholds, narrative construction. File
+access sits in a few stubs in `common.py`. `load_raster_clipped` is implemented (rasterio warp,
+clip and polygon mask to the reference CRS), so the raster-only notebooks, including
+`F02-P4 Pathway`, run once their paths are set in `config.py`. `load_activity_table` is also implemented and `ACTIVITY_TABLE` points to the bundled
+`canonical_v3_activities.csv`, so 4.2 runs as well. Three stubs remain and raise `NotImplementedError` until the notebooks that need them are run: `load_vector_intersecting`,
+`load_soil_class_table`, `load_national_forest_risk_percentiles`.
 
 Design rationale lives in the markdown cells next to each component, not in a separate document.
 
@@ -26,7 +27,7 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | `F02-P2 Nature.ipynb`  | F02-P2 | done (2.1 FLII, 2.2 KBA)            |
 | `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.6 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
-| `F02-P4 Pathway.ipynb` | F02-P4 | 4.1 done                            |
+| `F02-P4 Pathway.ipynb` | F02-P4 | 4.1, 4.2 done (canonical_v3)         |
 | `F02-P5 Benefit.ipynb` | F02-P5 | 5.1 avoided unplanned deforestation done |
 
 Each component follows the same shape: a markdown cell with data, locked decisions, example
@@ -81,9 +82,8 @@ today:
 | `pandas` | `load_soil_class_table` and `load_national_forest_risk_percentiles` |
 | `jupyterlab`, `ipykernel` | running the notebooks |
 
-`rasterio` and `pandas` are not imported anywhere yet. They are the dependencies of the four
-data access stubs in `common.py`, which lists exactly which stub needs which package. Filling
-the stubs therefore needs no change to the environment.
+`rasterio` and `pandas` are imported in `common.py` for the implemented loaders
+(`load_raster_clipped`, `load_activity_table`). The remaining stubs need no new packages.
 
 Not included, and a decision to make: **`matplotlib` is absent**, because the notebooks build no
 plots. Every chart is emitted as data in `tables` and drawn by the frontend. If you want to
@@ -103,9 +103,10 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
 - `F02-P2 General.ipynb` - components 1.1 to 1.7
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
 - `F02-P2 Climate.ipynb` - components 3.1 to 3.6
-- `F02-P4 Pathway.ipynb` - component 4.1
+- `F02-P4 Pathway.ipynb` - components 4.1 and 4.2
 - `F02-P5 Benefit.ipynb` - component 5.1
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
+- `canonical_v3_activities.csv` - activity + Triple Win benefit + QB catalog, exported from the Sheet, joined on (cat_code, ecosystem)
 - `outputs/` - per stage result JSON, written at run time
 - `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
   conversion is reviewed, then to be deleted
