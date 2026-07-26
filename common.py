@@ -233,40 +233,78 @@ def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
     raise NotImplementedError("Data access stub. Wire to geopandas.")
 
 
+# Column headers as they come out of the "NBS Pathway Logic" Sheet, mapped to the names the
+# tool uses. Underscore variants are accepted too, so a hand-made CSV also loads.
+_ACTIVITY_COL_ALIASES = {
+    "cat_id": "cat_code", "cat_code": "cat_code",
+    "ecosystem": "ecosystem",
+    "activity id": "activity_id", "activity_id": "activity_id",
+    "activity": "activity",
+    "benefit nature": "benefit_nature", "benefit_nature": "benefit_nature",
+    "benefit people": "benefit_people", "benefit_people": "benefit_people",
+    "benefit climate": "benefit_climate", "benefit_climate": "benefit_climate",
+    "qb avoided emissions": "qb_avoided", "qb_avoided": "qb_avoided",
+    "qb carbon sequestration": "qb_sequestration", "qb_sequestration": "qb_sequestration",
+}
+
+# Ecosystem is text in the Sheet; the raster band 2 is an integer. This is the bridge.
+_ECOSYSTEM_NAME_TO_CODE = {
+    "dryland forest": 1, "mangrove": 2, "peatland": 3, "savanna": 4,
+}
+
+
 def load_activity_table(path: str) -> dict[tuple[int, int], list[dict]]:
     """Load canonical_v3_activities, keyed on the pair (cat_code, ecosystem).
 
-    Returns {(cat_code, ecosystem): [row, row, ...]}, where each row is a dict with keys
-    activity_id, activity, benefit_nature, benefit_people, benefit_climate, qb_avoided,
-    qb_sequestration. A key with several activities returns several rows. See ACTIVITY_TABLE in
-    config.py for the expected CSV columns.
+    Reads the Sheet export directly: `Cat_ID`, `Ecosystem` (text), `Activity ID`, `Activity`,
+    the three `Benefit ...` columns and the two `QB ...` columns. Returns
+    {(cat_code, ecosystem_code): [row, ...]}, ecosystem mapped to the band-2 integer
+    (1 dryland forest, 2 mangrove, 3 peatland, 4 savanna). Rows with no ecosystem, the ineligible
+    categories, carry no join key and are skipped; those categories are handled in 4.2 by the
+    cat_code to pathway map instead.
     """
     df = pd.read_csv(path)
-    df.columns = [c.strip().lower() for c in df.columns]
+    df.columns = [_ACTIVITY_COL_ALIASES.get(c.strip().lower(), c.strip().lower())
+                  for c in df.columns]
 
-    required = {
-        "cat_code", "ecosystem", "activity_id", "activity",
-        "benefit_nature", "benefit_people", "benefit_climate",
-        "qb_avoided", "qb_sequestration",
-    }
+    required = {"cat_code", "ecosystem", "activity_id", "activity",
+                "benefit_nature", "benefit_people", "benefit_climate",
+                "qb_avoided", "qb_sequestration"}
     missing = required - set(df.columns)
     if missing:
-        raise ValueError(
-            f"{path} is missing columns {sorted(missing)}. Expected {sorted(required)}."
-        )
+        raise ValueError(f"{path} is missing columns {sorted(missing)}.")
 
     def as_bool(v: object) -> bool:
         return str(v).strip().lower() in {"yes", "y", "true", "1"}
 
+    def eco_code(v: object) -> int | None:
+        s = str(v).strip()
+        return int(s) if s.isdigit() else _ECOSYSTEM_NAME_TO_CODE.get(s.lower())
+
+    def clean_id(v: object) -> str:
+        if pd.isna(v):
+            return ""
+        try:
+            return str(int(float(v)))   # "11.0" from a float column -> "11"
+        except (ValueError, TypeError):
+            return str(v).strip()
+
+    def clean_text(v: object) -> str:
+        return "" if pd.isna(v) else " ".join(str(v).split())  # collapse stray newlines
+
     table: dict[tuple[int, int], list[dict]] = {}
     for _, r in df.iterrows():
-        key = (int(r["cat_code"]), int(r["ecosystem"]))
-        table.setdefault(key, []).append({
-            "activity_id": str(r["activity_id"]).strip(),
-            "activity": str(r["activity"]).strip(),
-            "benefit_nature": str(r["benefit_nature"]).strip(),
-            "benefit_people": str(r["benefit_people"]).strip(),
-            "benefit_climate": str(r["benefit_climate"]).strip(),
+        if pd.isna(r["ecosystem"]) or str(r["ecosystem"]).strip() == "":
+            continue  # ineligible category, no (cat_code, ecosystem) join key
+        ec = eco_code(r["ecosystem"])
+        if ec is None:
+            raise ValueError(f"Unknown ecosystem {r['ecosystem']!r} in {path}.")
+        table.setdefault((int(r["cat_code"]), ec), []).append({
+            "activity_id": clean_id(r["activity_id"]),
+            "activity": clean_text(r["activity"]),
+            "benefit_nature": clean_text(r["benefit_nature"]),
+            "benefit_people": clean_text(r["benefit_people"]),
+            "benefit_climate": clean_text(r["benefit_climate"]),
             "qb_avoided": as_bool(r["qb_avoided"]),
             "qb_sequestration": as_bool(r["qb_sequestration"]),
         })

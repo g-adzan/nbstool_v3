@@ -206,23 +206,15 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # ---------------------------------------------------------------------------------------
 # The activity + Triple Win benefit + carbon QB layer, joined to the pathway raster on the pair
 # (cat_code, ecosystem). Source of truth is the "NBS Pathway Logic" Google Sheet, tab
-# canonical_v3_activities. Export that tab to CSV and set the path below.
+# canonical_v3_activities; the CSV below is a direct export of it, kept in the repo.
 #
-# Expected CSV columns (one row per activity per applicable (cat_code, ecosystem)):
-#   cat_code            integer 1..17, matches band 3
-#   ecosystem           integer 1..4 (1 dryland forest, 2 mangrove, 3 peatland, 4 savanna)
-#   activity_id         string (do NOT rely on its numbering scheme, it is inconsistent)
-#   activity            string, the activity text
-#   benefit_nature      string, Triple Win pillar 1
-#   benefit_people      string, Triple Win pillar 2
-#   benefit_climate     string, Triple Win pillar 3
-#   qb_avoided          Yes/No, triggers the Avoided Emissions quantification
-#   qb_sequestration    Yes/No, triggers the Carbon Sequestration quantification
-#
-# There is no ecosystem = 0 row by design: no reference means no planting target, and the
-# pathway script gates those pixels to mask. Ineligible categories (see the map above) also
-# carry no rows.
-ACTIVITY_TABLE = r"<SET: path to canonical_v3_activities.csv>"
+# `load_activity_table` reads the Sheet's own headers: `Cat_ID` (1..17, the join key = band 3),
+# `Ecosystem` as TEXT (Dryland Forest / Mangrove / Peatland / Savanna, mapped to the band-2
+# integer 1..4), `Activity ID`, `Activity`, `Benefit Nature/People/Climate`, and
+# `QB Avoided Emissions` / `QB Carbon Sequestration` (Yes/No). The 6 ineligible categories appear
+# with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
+# To update, re-export the tab over this file.
+ACTIVITY_TABLE = r"C:\Users\carbo\Documents\Claude\Projects\NBS Tool\nbs_screening_tool\canonical_v3_activities.csv"
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
