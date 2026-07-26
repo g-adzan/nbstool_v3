@@ -13,8 +13,9 @@ by other methods.
 All analysis logic is real Python: masking, tabulation, thresholds, narrative construction. File
 access sits in a few stubs in `common.py`. `load_raster_clipped` is implemented (rasterio warp,
 clip and polygon mask to the reference CRS), so the raster-only notebooks, including
-`F02-P4 Pathway`, run once their paths are set in `config.py`. Three stubs remain and raise
-`NotImplementedError` until the notebooks that need them are run: `load_vector_intersecting`,
+`F02-P4 Pathway`, run once their paths are set in `config.py`. `load_activity_table` is also implemented (reads the canonical_v3_activities CSV for 4.2), so
+4.2 runs once `ACTIVITY_TABLE` is set to a CSV export of that Sheet tab. Three stubs remain and
+raise `NotImplementedError` until the notebooks that need them are run: `load_vector_intersecting`,
 `load_soil_class_table`, `load_national_forest_risk_percentiles`.
 
 Design rationale lives in the markdown cells next to each component, not in a separate document.
@@ -27,7 +28,7 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | `F02-P2 Nature.ipynb`  | F02-P2 | done (2.1 FLII, 2.2 KBA)            |
 | `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.6 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
-| `F02-P4 Pathway.ipynb` | F02-P4 | 4.1 done (canonical_v3 raster)      |
+| `F02-P4 Pathway.ipynb` | F02-P4 | 4.1, 4.2 done (canonical_v3)         |
 | `F02-P5 Benefit.ipynb` | F02-P5 | 5.1 avoided unplanned deforestation done |
 
 Each component follows the same shape: a markdown cell with data, locked decisions, example
@@ -104,7 +105,7 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
 - `F02-P2 General.ipynb` - components 1.1 to 1.7
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
 - `F02-P2 Climate.ipynb` - components 3.1 to 3.6
-- `F02-P4 Pathway.ipynb` - component 4.1
+- `F02-P4 Pathway.ipynb` - components 4.1 and 4.2
 - `F02-P5 Benefit.ipynb` - component 5.1
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
 - `outputs/` - per stage result JSON, written at run time

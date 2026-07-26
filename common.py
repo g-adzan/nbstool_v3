@@ -33,6 +33,7 @@ from typing import Iterable, Sequence
 
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 import rasterio
 from affine import Affine
 from rasterio.features import geometry_mask
@@ -230,6 +231,46 @@ def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
     Returns an empty GeoDataFrame when nothing intersects, never None.
     """
     raise NotImplementedError("Data access stub. Wire to geopandas.")
+
+
+def load_activity_table(path: str) -> dict[tuple[int, int], list[dict]]:
+    """Load canonical_v3_activities, keyed on the pair (cat_code, ecosystem).
+
+    Returns {(cat_code, ecosystem): [row, row, ...]}, where each row is a dict with keys
+    activity_id, activity, benefit_nature, benefit_people, benefit_climate, qb_avoided,
+    qb_sequestration. A key with several activities returns several rows. See ACTIVITY_TABLE in
+    config.py for the expected CSV columns.
+    """
+    df = pd.read_csv(path)
+    df.columns = [c.strip().lower() for c in df.columns]
+
+    required = {
+        "cat_code", "ecosystem", "activity_id", "activity",
+        "benefit_nature", "benefit_people", "benefit_climate",
+        "qb_avoided", "qb_sequestration",
+    }
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(
+            f"{path} is missing columns {sorted(missing)}. Expected {sorted(required)}."
+        )
+
+    def as_bool(v: object) -> bool:
+        return str(v).strip().lower() in {"yes", "y", "true", "1"}
+
+    table: dict[tuple[int, int], list[dict]] = {}
+    for _, r in df.iterrows():
+        key = (int(r["cat_code"]), int(r["ecosystem"]))
+        table.setdefault(key, []).append({
+            "activity_id": str(r["activity_id"]).strip(),
+            "activity": str(r["activity"]).strip(),
+            "benefit_nature": str(r["benefit_nature"]).strip(),
+            "benefit_people": str(r["benefit_people"]).strip(),
+            "benefit_climate": str(r["benefit_climate"]).strip(),
+            "qb_avoided": as_bool(r["qb_avoided"]),
+            "qb_sequestration": as_bool(r["qb_sequestration"]),
+        })
+    return table
 
 
 def load_soil_class_table(path: str) -> dict[int, str]:

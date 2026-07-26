@@ -179,6 +179,51 @@ PATHWAY_CATCODE_LABELS = {
 
 PATHWAY_UNCLASSIFIED_WARN_PCT = 20.0   # 4.1 flag when this much of the AOI carries no pathway
 
+# Primary pathway per canonical_v3 category. Lets 4.2 label the pathway of a category and know
+# which categories are Ineligible (pathway 4) and therefore carry no activity by design.
+PATHWAY_CATCODE_TO_PATHWAY = {
+    1: 1,   # Cat 1  Protect
+    2: 4,   # Cat 2  Ineligible
+    3: 4,   # Cat 3A Ineligible (savanna)
+    4: 3,   # Cat 3B Restore
+    5: 4,   # Cat 4A Ineligible (savanna)
+    6: 3,   # Cat 4B Restore
+    7: 3,   # Cat 5  Restore
+    8: 2,   # Cat 6  Manage
+    9: 4,   # Cat 7  Ineligible
+    10: 4,  # Cat 8A Ineligible (stable natural savanna)
+    11: 2,  # Cat 8B Manage
+    12: 3,  # Cat 8C Restore
+    13: 2,  # Cat 9A Manage
+    14: 3,  # Cat 9B Restore
+    15: 2,  # Cat 9C Manage
+    16: 4,  # Cat 9D Ineligible (settlement)
+    17: 3,  # Cat 10 Restore
+}
+
+# ---------------------------------------------------------------------------------------
+# Activity catalog, canonical_v3_activities (F02-P4, component 4.2)
+# ---------------------------------------------------------------------------------------
+# The activity + Triple Win benefit + carbon QB layer, joined to the pathway raster on the pair
+# (cat_code, ecosystem). Source of truth is the "NBS Pathway Logic" Google Sheet, tab
+# canonical_v3_activities. Export that tab to CSV and set the path below.
+#
+# Expected CSV columns (one row per activity per applicable (cat_code, ecosystem)):
+#   cat_code            integer 1..17, matches band 3
+#   ecosystem           integer 1..4 (1 dryland forest, 2 mangrove, 3 peatland, 4 savanna)
+#   activity_id         string (do NOT rely on its numbering scheme, it is inconsistent)
+#   activity            string, the activity text
+#   benefit_nature      string, Triple Win pillar 1
+#   benefit_people      string, Triple Win pillar 2
+#   benefit_climate     string, Triple Win pillar 3
+#   qb_avoided          Yes/No, triggers the Avoided Emissions quantification
+#   qb_sequestration    Yes/No, triggers the Carbon Sequestration quantification
+#
+# There is no ecosystem = 0 row by design: no reference means no planting target, and the
+# pathway script gates those pixels to mask. Ineligible categories (see the map above) also
+# carry no rows.
+ACTIVITY_TABLE = r"<SET: path to canonical_v3_activities.csv>"
+
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
 # ---------------------------------------------------------------------------------------
