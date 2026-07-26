@@ -28,7 +28,7 @@ Design rationale lives in the markdown cells next to each component, not in a se
 | `F02-P2 Climate.ipynb` | F02-P2 | 3.1 to 3.6 done                      |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming                            |
 | `F02-P4 Pathway.ipynb` | F02-P4 | 4.1, 4.2 done (canonical_v3)         |
-| `F02-P5 Benefit.ipynb` | F02-P5 | 5.1 avoided unplanned deforestation done |
+| `F02-P5 Benefit.ipynb` | F02-P5 | 5.1 general benefit, 5.2 avoided unplanned deforestation done |
 
 Each component follows the same shape: a markdown cell with data, locked decisions, example
 render and downstream use, then a code cell with one `analyze_*` function returning a
