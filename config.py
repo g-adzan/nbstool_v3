@@ -11,8 +11,10 @@ marked <SET ...> to your own file before running. This file also serves as the i
 REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
 # ============================ PRE-DEFINED LAYERS (placeholders) ============================
-# Ecosystem type (1.1): 1=Dryland, 2=Mangrove, 3=Peatland
-ECOSYSTEM_TYPE_RASTER = r"<SET: path to ecosystem_type.tif>"
+# Ecosystem type (1.1): derived from the pathway raster's ecosystem band (band 2), not a separate
+# raster. Dryland forest and savanna are merged into one "Dryland" class per the team.
+# pathway band-2 code -> Axis 3 class (1 Dryland, 2 Mangrove, 3 Peatland); band-2 0 (none) -> Other.
+PATHWAY_ECO_TO_AXIS3 = {1: 1, 4: 1, 2: 2, 3: 3}   # 1 dryland forest & 4 savanna both -> 1 Dryland
 
 # Administrative boundaries, GADM v4.1 (1.2)
 GADM_L0 = r"<SET: path to GADM level 0 (country) polygons>"
@@ -25,20 +27,20 @@ GADM_DISTRICT_FIELD = "NAME_2"
 # Protected areas, WDPA (1.3)
 WDPA_POLYGON = r"E:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
-# Terrain, pre-classified metric rasters (1.4)
-# NOT AVAILABLE as classified layers yet. E:\NBSTOOLV3 has SEA_ELEVATION_54034.tif but it is
-# CONTINUOUS elevation in metres (0-8423), not the 4-class raster 1.4 expects, and there is no
-# slope raster at all. 1.4 cannot run until either these are pre-classified into the codes in
-# ELEVATION_CLASSES / SLOPE_CLASSES, or 1.4 is changed to bin the continuous elevation itself.
-SLOPE_CLASS_RASTER     = r"<SET: path to slope_class_metric.tif>"
-ELEVATION_CLASS_RASTER = r"<SET: path to elevation_class_metric.tif; SEA_ELEVATION_54034.tif is continuous, needs binning>"
+# Terrain (1.4). Continuous rasters; 1.4 does the classification itself, the input is NOT
+# pre-binned. Elevation in metres. Slope must be in PERCENT (rise/run), the same unit as
+# SLOPE_BREAKS; if the slope raster is in degrees, convert it or change SLOPE_BREAKS.
+ELEVATION_RASTER = r"E:\NBSTOOLV3\SEA_ELEVATION_54034.tif"   # continuous metres
+SLOPE_RASTER     = r"<SET: continuous slope raster in PERCENT>"  # being prepared
+# Upper-exclusive bin edges: digitize(value, breaks) + 1 -> class code.
+ELEVATION_BREAKS = [500, 1000, 2000]   # metres  -> elevation classes 1..4
+SLOPE_BREAKS     = [8, 15, 25, 40]     # percent -> slope classes 1..5
 
 # Historical deforestation (1.5)
-FC2014_RASTER = r"E:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1, confirmed 2-class
-LC2024_RASTER = r"E:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0, confirmed 21 histogram buckets
-# Note: SEA_FC2024.tif (binary 0/1) also exists. forest_mask_2024 currently derives forest 2024
-# from LC2024 FOREST_CODES (Tier 1-2), NOT from this binary layer. Switching would change the
-# forest definition, so it stays a team decision, not a silent swap.
+FC2014_RASTER = r"E:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1
+FC2024_RASTER = r"E:\NBSTOOLV3\SEA_FC2024.tif"   # binary 0/1; forest_mask_2024 reads THIS now
+FC2024_FOREST_CODES = [1]
+LC2024_RASTER = r"E:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; kept for reference, not the 2024 mask
 
 # Deforestation risk (1.6)
 PROB_RASTER = r"E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run

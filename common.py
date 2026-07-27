@@ -51,8 +51,8 @@ _RESAMPLING = {
 from config import (
     FC2014_RASTER,
     FC2014_FOREST_CODES,
-    FOREST_CODES,
-    LC2024_RASTER,
+    FC2024_RASTER,
+    FC2024_FOREST_CODES,
     OUTPUT_DIR,
     REFERENCE_CRS,
 )
@@ -369,6 +369,23 @@ def tabulate_classes(
     return rows
 
 
+def classify_continuous(raster: RasterSlice, breaks: Sequence[float]) -> RasterSlice:
+    """Bin a continuous raster into integer class codes 1..len(breaks)+1.
+
+    Upper-exclusive edges via np.digitize: a value below breaks[0] is class 1, and a value at or
+    above breaks[-1] is the top class. Used by 1.4 to classify continuous elevation and slope
+    itself, since the inputs are not pre-binned. The mask is preserved, so nodata stays nodata.
+    """
+    codes = np.digitize(raster.values.filled(np.nan), list(breaks), right=False) + 1
+    masked = np.ma.masked_array(codes, mask=np.ma.getmaskarray(raster.values))
+    return RasterSlice(
+        values=masked,
+        pixel_area_ha=raster.pixel_area_ha,
+        transform=raster.transform,
+        crs=raster.crs,
+    )
+
+
 def safe_pct(part: float, whole: float) -> float:
     """Share in percent, 0.0 when the denominator is zero. Keeps narratives free of NaN."""
     return 0.0 if whole <= 0 else part / whole * 100.0
@@ -410,19 +427,19 @@ class ForestMask:
 
 
 def forest_mask_2024(aoi: AOI) -> ForestMask:
-    """Forest inside the AOI in 2024, Tier 1 to 2 natural forest only (Scenario 2A).
+    """Forest inside the AOI in 2024, from the binary FC2024 layer.
 
-    FOREST_CODES = [1, 6, 7, 8, 10] in the 20 class LC 2024 legend: flooded forest, mangrove,
-    deciduous, evergreen, mixed forest. Plantation classes (rubber, palm, forest plantation,
-    crop plantation) are not forest here, which is what keeps this consistent with the FC 2014
-    definition used in the backend trajectory work.
+    Reads SEA_FC2024.tif (value 1 = forest), the same Tier 1-2 definition applied upstream to
+    FC2014, so both dates are symmetric. This replaces the earlier derivation from LC2024
+    FOREST_CODES; the switch was a team decision, LC2024 is still wired but no longer the source
+    of the 2024 forest mask.
     """
-    lc = load_raster_clipped(LC2024_RASTER, aoi, resampling="nearest")
-    mask = np.isin(lc.values.filled(-1), FOREST_CODES)
+    fc = load_raster_clipped(FC2024_RASTER, aoi, resampling="nearest")
+    mask = np.isin(fc.values.filled(-1), FC2024_FOREST_CODES)
     return ForestMask(
         mask=mask,
-        pixel_area_ha=lc.pixel_area_ha,
-        area_ha=int(mask.sum()) * lc.pixel_area_ha,
+        pixel_area_ha=fc.pixel_area_ha,
+        area_ha=int(mask.sum()) * fc.pixel_area_ha,
     )
 
 
@@ -524,6 +541,31 @@ class ComponentResult:
 
 def not_applicable(component: str, reason: str) -> ComponentResult:
     return ComponentResult(component=component, applicable=False, narrative=reason)
+
+
+def show_result(r: ComponentResult) -> None:
+    """Display one component's result inline in a notebook, section by section.
+
+    Prints the component header, renders each table as a DataFrame, shows the `values` dict, and
+    prints any flags. Each component cell calls this so its result is visible when the cell runs,
+    even though the final cell still saves all results to one combined JSON. Import-light: pandas
+    and IPython.display are imported here so the module still loads outside a notebook.
+    """
+    from IPython.display import display
+
+    header = r.component + ("" if r.applicable else "  (not applicable)")
+    print(f"[{header}]")
+    if r.narrative:
+        print(f"  {r.narrative}")
+    for name, tbl in r.tables.items():
+        if tbl:
+            rows = [asdict(x) if is_dataclass(x) and not isinstance(x, type) else x for x in tbl]
+            print(f"  {name}:")
+            display(pd.DataFrame(rows))
+    if r.values:
+        display(r.values)
+    for f in r.flags:
+        print("FLAG:", f)
 
 
 # ============================ RESULT HANDOFF ============================
