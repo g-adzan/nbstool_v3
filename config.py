@@ -23,18 +23,25 @@ GADM_PROVINCE_FIELD = "NAME_1"
 GADM_DISTRICT_FIELD = "NAME_2"
 
 # Protected areas, WDPA (1.3)
-WDPA_POLYGON = r"<SET: path to WDPA_polygon_4326.shp>"
+WDPA_POLYGON = r"E:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
 # Terrain, pre-classified metric rasters (1.4)
+# NOT AVAILABLE as classified layers yet. E:\NBSTOOLV3 has SEA_ELEVATION_54034.tif but it is
+# CONTINUOUS elevation in metres (0-8423), not the 4-class raster 1.4 expects, and there is no
+# slope raster at all. 1.4 cannot run until either these are pre-classified into the codes in
+# ELEVATION_CLASSES / SLOPE_CLASSES, or 1.4 is changed to bin the continuous elevation itself.
 SLOPE_CLASS_RASTER     = r"<SET: path to slope_class_metric.tif>"
-ELEVATION_CLASS_RASTER = r"<SET: path to elevation_class_metric.tif>"
+ELEVATION_CLASS_RASTER = r"<SET: path to elevation_class_metric.tif; SEA_ELEVATION_54034.tif is continuous, needs binning>"
 
 # Historical deforestation (1.5)
-FC2014_RASTER = r"<SET: path to FC2014.tif>"
-LC2024_RASTER = r"<SET: path to LC2024.tif>"
+FC2014_RASTER = r"E:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1, confirmed 2-class
+LC2024_RASTER = r"E:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0, confirmed 21 histogram buckets
+# Note: SEA_FC2024.tif (binary 0/1) also exists. forest_mask_2024 currently derives forest 2024
+# from LC2024 FOREST_CODES (Tier 1-2), NOT from this binary layer. Switching would change the
+# forest definition, so it stays a team decision, not a silent swap.
 
 # Deforestation risk (1.6)
-PROB_RASTER = r"<SET: path to prob.tif>"
+PROB_RASTER = r"E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run
 NATIONAL_FOREST_RISK_CSV = r"<SET: path to national_forest_risk_reference.csv>"
 
 # Natural disaster hazard, 5-class intensity (1.7)
