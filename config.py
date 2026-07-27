@@ -60,11 +60,21 @@ FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
 KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
 
-# Biomass (Climate module, 3.1). Continuous rasters, DRY BIOMASS DENSITY in Mg/ha, not carbon.
-# AGB is the in-house layer (Alpha Earth + GEDI). The tool applies the carbon fraction and the
-# CO2 conversion itself, so both conversions stay visible here rather than hidden upstream.
-AGB_RASTER = r"<SET: path to agb_mgha.tif>"   # aboveground biomass, Mg/ha
-BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # belowground biomass, Mg/ha
+# Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
+# Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
+# tool applies the carbon fraction and the CO2 conversion itself (CARBON_FRACTION, CO2_PER_C), so
+# both conversions stay visible here rather than hidden upstream.
+AGB_RASTER = r"E:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif"   # aboveground biomass, Mg/ha
+
+# Belowground biomass is DERIVED from AGB by a fixed root-to-shoot ratio, not read from a raster:
+#     BGB_Mg/ha = AGB_Mg/ha * ROOT_TO_SHOOT_RATIO
+# TEMPORARY stand-in until a mapped BGB layer exists. Consequence to keep in mind: a fixed ratio
+# makes BGB a constant multiple of AGB, so any AGB/BGB pool split is constant by construction
+# (about 78 / 22 at 0.28) and is NOT a site-specific finding. 3.1 flags this; 5.2 only sums the
+# two pools, so it is unaffected. When a mapped BGB raster arrives, set BGB_RASTER below and
+# switch 3.1 and 5.2 back to reading it.
+ROOT_TO_SHOOT_RATIO = 0.28
+# BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # reinstate when a mapped BGB layer exists
 
 # Soil organic carbon (Climate module, 3.2). Values are CARBON, tC/ha, not biomass and not CO2e.
 SOIL_CARBON_RASTER = r"<SET: path to soil_carbon.tif>"   # SOC stock, tC/ha
@@ -237,7 +247,7 @@ BENEFIT_SLIVER_WARN_PCT = 1.0
 
 # 5.2 Avoided Emissions from Unplanned Deforestation reads no new layer. It combines three
 # layers that other components already declare: PATHWAY_RASTER (which pixels are Protect),
-# PROB_RASTER (how the projected loss is placed), and AGB_RASTER / BGB_RASTER (how much carbon
+# PROB_RASTER (how the projected loss is placed), and AGB_RASTER + the derived BGB (how much carbon
 # each of those pixels holds).
 
 # The historical rate in 1.5 is measured over 2014 to 2024. Projecting it further than the
