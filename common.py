@@ -228,9 +228,17 @@ def load_raster_clipped(
 def load_vector_intersecting(path: str, aoi: AOI) -> gpd.GeoDataFrame:
     """Load only the features of `path` that intersect the AOI, reprojected to REFERENCE_CRS.
 
-    Returns an empty GeoDataFrame when nothing intersects, never None.
+    Two stages, so a SEA-wide layer is never read in full. `bbox=aoi.geometry` pushes the AOI
+    bounding box down to the file reader (geopandas reprojects it to the file CRS), which uses
+    the file's spatial index to return only nearby features. Then an exact `intersects` test
+    drops the corners the bounding box let through. Returns an empty GeoDataFrame, never None.
     """
-    raise NotImplementedError("Data access stub. Wire to geopandas.")
+    gdf = gpd.read_file(path, bbox=aoi.geometry)
+    if gdf.empty:
+        return gdf.to_crs(REFERENCE_CRS) if gdf.crs is not None else gdf
+    gdf = gdf.to_crs(REFERENCE_CRS)
+    aoi_geom = aoi.geometry.iloc[0]
+    return gdf[gdf.intersects(aoi_geom)].reset_index(drop=True)
 
 
 # Column headers as they come out of the "NBS Pathway Logic" Sheet, mapped to the names the
