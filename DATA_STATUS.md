@@ -28,9 +28,25 @@ Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify somet
 | 3.6 Soil Classification | ⛔ | soil raster + lookup table + stub `load_soil_class_table` |
 | 4.1 Pathway Distribution | ⚠️ | verify `prob.tif`/pathway values; runs |
 | 4.2 Activity List | ✅ | — |
-| 5.x Benefit | — | built in another session, not audited here |
+| 5.1 General Benefit | ✅* | needs the **F02-P4 stage JSON** first |
+| 5.2 Avoided Unplanned Deforestation | ✅* | needs **F02-P4 + F02-P2 General (1.5) stage JSON** + `PROJECT_DURATION_YEARS` |
 
-Runnable now: **1.1, 1.3, 1.4, 1.5, 2.1, 3.1, 4.1, 4.2**.
+Runnable now: **1.1, 1.3, 1.4, 1.5, 2.1, 3.1, 4.1, 4.2**, plus **5.1, 5.2** once their upstream
+stages have been run and saved (see run order below).
+
+### F02-P5 run order (cross-stage, not missing data)
+
+5.x reads no new layer that is not already wired; both are blocked only by *order*, because they
+consume earlier stages' JSON via `load_results`:
+
+- **5.1** reads the **F02-P4** stage (the 4.2 activity + Triple Win benefit rows). Run and save
+  `F02-P4 Pathway` first.
+- **5.2** reads the **F02-P4** stage (QB Avoided gate from 4.2) **and** the **F02-P2 General**
+  stage (the deforestation rate from 1.5). Rasters AGB / PATHWAY / PROB are all wired. Set
+  `PROJECT_DURATION_YEARS` in the Setup cell. Because General has blocked sections (1.2, 1.6,
+  1.7), run only the working General cells (1.1, 1.3, 1.4, **1.5**, ...) then its Save cell, so
+  the General JSON carries the rate 5.2 needs. If 1.5's rate is absent, 5.2 returns
+  "not applicable" rather than erroring.
 
 ---
 
@@ -48,6 +64,9 @@ Runnable now: **1.1, 1.3, 1.4, 1.5, 2.1, 3.1, 4.1, 4.2**.
 - [ ] **WorldClim ×24** — `WORLDCLIM_TAVG_RASTERS` (12) + `WORLDCLIM_PREC_RASTERS` (12),
       v2.1 30s (3.3, 3.4).
 
+_F02-P5 (5.1, 5.2) adds no new data: its rasters (AGB, PATHWAY, PROB) are already wired. It
+needs only the upstream stage JSON and `PROJECT_DURATION_YEARS` (a user input)._
+
 ---
 
 ## 3. Code stubs (`common.py`)
@@ -64,12 +83,12 @@ Runnable now: **1.1, 1.3, 1.4, 1.5, 2.1, 3.1, 4.1, 4.2**.
 
 | Config | File | Used by |
 |---|---|---|
-| `PATHWAY_RASTER` | `E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif` | 4.1, 4.2, 1.1 (band 2) |
+| `PATHWAY_RASTER` | `E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif` | 4.1, 4.2, 1.1 (band 2), 5.2 |
 | `ACTIVITY_TABLE` | repo `canonical_v3_activities.csv` | 4.2 |
-| `AGB_RASTER` (+ derived BGB) | `E:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.x |
+| `AGB_RASTER` (+ derived BGB) | `E:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.2 |
 | `WDPA_POLYGON` | `E:\NBSTOOLV3\WDPA_SEA.shp` | 1.3 |
 | `FC2014_RASTER`, `FC2024_RASTER`, `LC2024_RASTER` | `E:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5 |
-| `PROB_RASTER` | `E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6 |
+| `PROB_RASTER` | `E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6, 5.2 |
 | `ELEVATION_RASTER` | `E:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived) |
 | `FLII_FOREST_RASTER`, `FLII_CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
 
