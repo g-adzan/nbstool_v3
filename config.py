@@ -61,8 +61,8 @@ FIRE_HAZARD_RASTER = HAZARD_RASTERS["fire"]
 
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
-FLII_CLASS_RASTER  = r"<SET: path to flii_class_mosaic_SEA_300m.tif>"   # 1=Low, 2=Medium, 3=High
-FLII_FOREST_RASTER = r"<SET: path to flii_forest_mosaic_SEA_300m.tif>"  # continuous 0-10
+FLII_CLASS_RASTER  = r"D:\NBSTOOLV3\flii_class_mosaic_SEA_300m.tif"   # 1=Low, 2=Medium, 3=High
+FLII_FOREST_RASTER = r"D:\NBSTOOLV3\flii_mosaic_SEA_300m.tif"         # continuous 0-10, forest-masked
 FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
