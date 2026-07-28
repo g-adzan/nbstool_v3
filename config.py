@@ -27,11 +27,10 @@ GADM_DISTRICT_FIELD = "NAME_2"
 # Protected areas, WDPA (1.3)
 WDPA_POLYGON = r"E:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
-# Terrain (1.4). Continuous rasters; 1.4 does the classification itself, the input is NOT
-# pre-binned. Elevation in metres. Slope must be in PERCENT (rise/run), the same unit as
-# SLOPE_BREAKS; if the slope raster is in degrees, convert it or change SLOPE_BREAKS.
+# Terrain (1.4). One continuous elevation raster in metres. Slope is DERIVED from it by the tool
+# (slope_percent_from_dem), so no separate slope raster is needed. 1.4 bins both itself; the
+# inputs are not pre-classified.
 ELEVATION_RASTER = r"E:\NBSTOOLV3\SEA_ELEVATION_54034.tif"   # continuous metres
-SLOPE_RASTER     = r"<SET: continuous slope raster in PERCENT>"  # being prepared
 # Upper-exclusive bin edges: digitize(value, breaks) + 1 -> class code.
 ELEVATION_BREAKS = [500, 1000, 2000]   # metres  -> elevation classes 1..4
 SLOPE_BREAKS     = [8, 15, 25, 40]     # percent -> slope classes 1..5

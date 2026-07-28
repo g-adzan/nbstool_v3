@@ -369,6 +369,37 @@ def tabulate_classes(
     return rows
 
 
+def slope_percent_from_dem(elev: RasterSlice, aoi: AOI) -> RasterSlice:
+    """Slope in percent computed from a clipped elevation raster (metres), for 1.4.
+
+    Slope is the horizontal gradient of elevation, so it needs true ground distances. But the
+    reference CRS (ESRI:54034) is equal area: it preserves area and distorts distance with
+    latitude. This corrects the per-pixel run using the AOI centroid latitude, first-order exact
+    for a cylindrical equal-area sphere with the standard parallel at the equator: the east-west
+    run shrinks by cos(lat), the north-south run grows by 1 / cos(lat). Near the equator the
+    correction is tiny; it grows toward the tropics' edge.
+
+    Returns a RasterSlice of slope percent on the same grid, so it can be binned like any layer.
+    """
+    z = elev.values.astype("float64").filled(np.nan)
+    if min(z.shape) < 2:
+        # Too few pixels for a gradient; report flat rather than error.
+        flat = np.ma.masked_array(np.zeros_like(z), mask=np.ma.getmaskarray(elev.values))
+        return RasterSlice(flat, elev.pixel_area_ha, elev.transform, elev.crs)
+
+    lat = np.radians(float(aoi.geometry.centroid.to_crs(4326).y.iloc[0]))
+    cos_lat = max(float(np.cos(lat)), 1e-6)
+    run_x = abs(elev.transform.a) * cos_lat        # east-west ground metres per pixel
+    run_y = abs(elev.transform.e) / cos_lat        # north-south ground metres per pixel
+
+    gy, gx = np.gradient(z, run_y, run_x)
+    slope_pct = np.sqrt(gx**2 + gy**2) * 100.0
+    masked = np.ma.masked_array(
+        slope_pct, mask=np.isnan(slope_pct) | np.ma.getmaskarray(elev.values)
+    )
+    return RasterSlice(masked, elev.pixel_area_ha, elev.transform, elev.crs)
+
+
 def classify_continuous(raster: RasterSlice, breaks: Sequence[float]) -> RasterSlice:
     """Bin a continuous raster into integer class codes 1..len(breaks)+1.
 
