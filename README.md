@@ -106,6 +106,7 @@ All pre-defined layer paths and locked constants live in `config.py`. Set every 
 - `F02-P4 Pathway.ipynb` - components 4.1 and 4.2
 - `F02-P5 Benefit.ipynb` - component 5.1
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
+- `DATA_STATUS.md` - living checklist: which data is wired, which is missing, which sections run
 - `canonical_v3_activities.csv` - activity + Triple Win benefit + QB catalog, exported from the Sheet, joined on (cat_code, ecosystem)
 - `outputs/` - per stage result JSON, written at run time
 - `docs/backend_analysis_pseudocode.md` - superseded by the notebooks, kept only until the
