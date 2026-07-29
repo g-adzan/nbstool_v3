@@ -320,18 +320,34 @@ ARR_SEQ_PAIRS = frozenset({
 ARR_YOUNG_END_YEAR = 20
 ARR_OLD_END_YEAR = 40
 
-# Reference accumulation rates, Mg DRY MATTER per ha per year, ANX-B Section 4.6. Dryland uses
-# the single conservative seasonal-lowland zone for v1; the three-zone split (humid lowland,
-# seasonal lowland, humid montane) is deferred because it needs elevation + WorldClim rasters
-# that are not confirmed present. Keyed on ecosystem code: 1 dryland, 2 mangrove, 3 peatland.
-ARR_RATE_DM = {
-    1: {"young": 2.4, "old": 2.0},    # dryland, seasonal-lowland conservative default
-    2: {"young": 12.0, "old": 7.0},   # mangrove
-    3: {"young": 5.7, "old": 3.5},    # peatland, biomass only
+# Reference accumulation rates, Mg DRY MATTER per ha per year, ANX-B Section 4.6. Mangrove and
+# peatland use one rate each; dryland is split into three zones, derived per pixel (below).
+ARR_RATE_DM = {                        # non-dryland ecosystems, keyed on ecosystem code
+    2: {"young": 12.0, "old": 7.0},    # mangrove
+    3: {"young": 5.7, "old": 3.5},     # peatland, biomass only
+}
+ARR_RATE_DM_DRYLAND = {                # dryland, keyed on zone code (see ARR_DRYLAND_ZONES)
+    1: {"young": 3.4, "old": 2.7},     # humid lowland (rainforest)
+    2: {"young": 2.4, "old": 2.0},     # seasonal lowland (conservative, wide range)
+    3: {"young": 2.4, "old": 1.9},     # humid montane
 }
 
 # Root-to-shoot ratio R (BGB / AGB), ANX-B Section 4.7, low-biomass classes.
-ARR_ROOT_TO_SHOOT = {1: 0.44, 2: 0.39, 3: 0.25}   # dryland seasonal, mangrove, peat
+ARR_ROOT_TO_SHOOT = {2: 0.39, 3: 0.25}                    # mangrove, peat
+ARR_ROOT_TO_SHOOT_DRYLAND = {1: 0.21, 2: 0.44, 3: 0.32}   # humid lowland, seasonal, montane
+
+# Dryland zone derivation, ANX-B Section 4.5. Derived per pixel from elevation (metres,
+# ELEVATION_RASTER) and the 12-band monthly precipitation raster (WORLDCLIM_PREC_RASTER). A month
+# below ARR_ZONE_DRY_MONTH_MM counts as a dry month (Walsh 1996, tropical dry-season standard).
+# Rule: humid montane if elevation above 1000 m; else humid lowland if annual rainfall above
+# 2000 mm AND fewer than 3 dry months; else seasonal lowland. Boundary and missing-data pixels
+# fall to seasonal lowland, the lower-productivity zone, for a conservative estimate.
+ARR_DRYLAND_ZONES = {1: "humid lowland", 2: "seasonal lowland", 3: "humid montane"}
+ARR_ZONE_ELEV_MONTANE_M = 1000.0
+ARR_ZONE_WET_ANNUAL_MM = 2000.0
+ARR_ZONE_DRY_MONTH_MM = 100.0
+ARR_ZONE_DRY_SEASON_MONTHS = 3
+ARR_DRYLAND_DEFAULT_ZONE = 2   # seasonal lowland, used when zone inputs are missing
 
 # Carbon fraction, dry matter to carbon, ANX-B Section 4.6. Mangrove 0.451, others 0.47.
 ARR_CARBON_FRACTION = {1: 0.47, 2: 0.451, 3: 0.47}
