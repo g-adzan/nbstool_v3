@@ -182,6 +182,7 @@ PATHWAY_CODES = {
 }
 
 PROTECT_CODE = 1   # named because F02-P5 selects on it; the other codes are only tabulated
+RESTORE_CODE = 3   # named because 5.3 selects Restore pixels on it
 
 # Codes 1 to 3 are the actual NBS pathways. Code 4 is a screening outcome in the same band:
 # the site cannot generate carbon credits, though non carbon options may still exist.
@@ -289,6 +290,68 @@ PATHWAY_ECOSYSTEM_PEATLAND = 3
 # never enter the Protect pool. A pool pixel outside this mapping means the risk layer and the
 # ecosystem band disagree about what is forest, which 5.2 raises as a flag.
 PROTECT_ECOSYSTEM_WORDS = {1: "forest", 2: "mangrove", 3: "peatland"}
+
+# ---------------------------------------------------------------------------------------
+# ARR carbon sequestration (Benefit module 5.3), per NBS-v3-ANX-B v2 (2026-07-28)
+# ---------------------------------------------------------------------------------------
+# Reference-rate / yield-curve method: accumulate living biomass (AGB + BGB) on a restoring
+# stand over the project years, deduct the biomass already on site, scale by a stocking factor,
+# convert to tCO2e. Rates and parameters are from ANX-B Section 4; that doc carries the sources
+# and confidence levels. Biomass ONLY: no soil, no peat soil, no avoided emissions, no dead wood
+# or litter. This is an ex-ante, pre-feasibility estimate, not project-grade MRV.
+
+# Which (cat_code, ecosystem) pairs get carbon quantified. Encodes ANX-B Section 3.2
+# "Sequestration calculated", keyed on the pathway raster's band-3 cat_code and band-2 ecosystem.
+# Deliberately NOT the sheet's QB Carbon Sequestration flag: the sheet currently contradicts the
+# method on peat (sheet No, method Yes biomass-only) and savanna (sheet Yes, method defers), and
+# is flagged for reconciliation. Savanna (eco 4) is absent here = deferred; Cat 9B peat (14, 3)
+# is absent = rewetting only, no planting.
+ARR_SEQ_PAIRS = frozenset({
+    (4, 1), (4, 2), (4, 3),     # Cat 3B  dryland, mangrove, peat
+    (6, 1), (6, 2), (6, 3),     # Cat 4B
+    (7, 1), (7, 2), (7, 3),     # Cat 5   (savanna 7,4 excluded)
+    (12, 1), (12, 2), (12, 3),  # Cat 8C
+    (14, 2),                    # Cat 9B  mangrove only (peat 14,3 is rewetting only)
+    (17, 1), (17, 2), (17, 3),  # Cat 10  (savanna 17,4 excluded)
+})
+
+# Growth phases, ANX-B Section 4.4. Young Y1-20, Old Y21-40. The curve is defined only to Y40;
+# beyond that no further accumulation is credited.
+ARR_YOUNG_END_YEAR = 20
+ARR_OLD_END_YEAR = 40
+
+# Reference accumulation rates, Mg DRY MATTER per ha per year, ANX-B Section 4.6. Dryland uses
+# the single conservative seasonal-lowland zone for v1; the three-zone split (humid lowland,
+# seasonal lowland, humid montane) is deferred because it needs elevation + WorldClim rasters
+# that are not confirmed present. Keyed on ecosystem code: 1 dryland, 2 mangrove, 3 peatland.
+ARR_RATE_DM = {
+    1: {"young": 2.4, "old": 2.0},    # dryland, seasonal-lowland conservative default
+    2: {"young": 12.0, "old": 7.0},   # mangrove
+    3: {"young": 5.7, "old": 3.5},    # peatland, biomass only
+}
+
+# Root-to-shoot ratio R (BGB / AGB), ANX-B Section 4.7, low-biomass classes.
+ARR_ROOT_TO_SHOOT = {1: 0.44, 2: 0.39, 3: 0.25}   # dryland seasonal, mangrove, peat
+
+# Carbon fraction, dry matter to carbon, ANX-B Section 4.6. Mangrove 0.451, others 0.47.
+ARR_CARBON_FRACTION = {1: 0.47, 2: 0.451, 3: 0.47}
+
+# Stocking factor, ANX-B Section 4.9. Active planting reaches full stocking; ANR and mangrove EMR
+# rely on natural recruitment. The 0.8 for ANR/EMR is UNCALIBRATED (doc range 0.7 to 0.85, open
+# item). ARR_ANR_PAIRS lists the (cat_code, ecosystem) whose activity is ANR or mangrove EMR:
+# 3B dryland is literally ANR, and the ARR method treats Cat 4B/5/8C/10 mangrove as EMR. All
+# other pairs are treated as planting. The split itself is uncalibrated and flagged.
+ARR_STOCKING_PLANTING = 1.0
+ARR_STOCKING_ANR = 0.8
+ARR_ANR_PAIRS = frozenset({(4, 1), (6, 2), (7, 2), (12, 2), (17, 2)})
+
+# Uncertainty band, ANX-B Section 4.11. Indicative screening range, NOT a confidence interval.
+ARR_UNCERTAINTY_LOW = 0.7
+ARR_UNCERTAINTY_HIGH = 1.2
+
+# Ecosystem codes whose ARR carbon is deferred: activity and benefit still apply, no carbon
+# number. Savanna (4) stores carbon mainly in soil and roots, outside the biomass scope here.
+ARR_CARBON_DEFERRED_ECO = frozenset({4})
 
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
