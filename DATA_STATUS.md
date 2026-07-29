@@ -1,7 +1,7 @@
 # Data & Runnability Status
 
 Living checklist of what is wired, what data is still missing, and which notebook sections can
-run. Update the checkboxes as data arrives. Last checked: 2026-07-28 (after the second upload).
+run. Update the checkboxes as data arrives. Last checked: 2026-07-29 (after 5.3 ARR carbon).
 
 Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify something on first run.
 
@@ -33,16 +33,19 @@ AOI: all five notebooks are set to `D:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"
 | 4.2 Activity List | ✅ | — |
 | 5.1 General Benefit | ✅* | needs the F02-P4 stage JSON first |
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
+| 5.3 ARR Carbon Removal (ex-ante) | ⚠️ | runs directly from rasters (pathway + AGB + elevation + precip), no stage file; baseline uses PLACEHOLDER class values (C4/C5/C6), and precip/elev units to verify |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2**, plus **5.1, 5.2**
-after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but need a
-one-time check.
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 5.3**, plus
+**5.1, 5.2** after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but
+need a one-time check.
 
 ### F02-P5 run order (cross-stage, not missing data)
 
 - **5.1** reads the **F02-P4** stage. Run and save `F02-P4 Pathway` first.
 - **5.2** reads **F02-P4** (QB gate) + **F02-P2 General** (1.5 rate). Set `PROJECT_DURATION_YEARS`.
   Run only General's working cells then Save, so the General JSON carries the rate.
+- **5.3** reads the pathway, AGB, elevation and precip rasters **directly**, no stage file. Set
+  `PROJECT_DURATION_YEARS`. Independent of 5.1 and 5.2.
 
 ---
 
@@ -71,15 +74,15 @@ one-time check.
 |---|---|---|
 | `PATHWAY_RASTER` | `D:\NBSTOOLV3\SEA_NBS_PATHWAY.tif` | 4.1, 4.2, 1.1, 5.2 |
 | `ACTIVITY_TABLE` | repo `canonical_v3_activities.csv` | 4.2 |
-| `AGB_RASTER` (+ derived BGB) | `D:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.2 |
+| `AGB_RASTER` (+ derived BGB) | `D:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.2, 5.3 |
 | `ADMIN_BOUNDARIES` | `D:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp` | 1.2 |
 | `WDPA_POLYGON` | `D:\NBSTOOLV3\WDPA_SEA.shp` | 1.3 |
 | `KBA_POLYGON` | `D:\NBSTOOLV3\SouthEast_Asia_KBA.shp` | 2.2 |
 | `FC2014/FC2024/LC2024_RASTER` | `D:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5 |
 | `PROB_RASTER` | `D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6, 5.2 |
-| `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived) |
+| `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived), 5.3 (dryland zone) |
 | `FLII_FOREST/CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
-| `WORLDCLIM_TAVG/PREC_RASTER` | `D:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4 |
+| `WORLDCLIM_TAVG/PREC_RASTER` | `D:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4; PREC also 5.3 (dryland zone) |
 | `SOIL_CLASS_RASTER` | `D:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
 
 ---
@@ -90,7 +93,10 @@ one-time check.
 - [ ] FLII class raster codes are 1/2/3 = Low/Medium/High (2.1).
 - [ ] 1.2 admin field names `GID_0/1/2`, `NAME_1/2`, `COUNTRY` match (they do in this file).
 - [ ] `temperature_v3` unit is °C and `precipitation_v3` is mm; confirm the source/period so the
-      `WORLDCLIM_*` labels are right (3.3, 3.4).
+      `WORLDCLIM_*` labels are right (3.3, 3.4). **5.3 also depends on the precip unit being mm**:
+      the dryland zone thresholds (annual > 2000 mm, dry month < 100 mm) assume mm/month.
+- [ ] **5.3 baseline class values** (`ARR_BASELINE_CLASS_MGHA` C4 25, C5 5, C6 0 Mg/ha) are
+      placeholders; the ARR removal total scales with them. Replace with sourced values.
 
 ---
 
