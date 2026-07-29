@@ -244,7 +244,7 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # `QB Avoided Emissions` / `QB Carbon Sequestration` (Yes/No). The 6 ineligible categories appear
 # with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
 # To update, re-export the tab over this file.
-ACTIVITY_TABLE = r"C:\Users\carbo\Documents\Claude\Projects\NBS Tool\nbs_screening_tool\canonical_v3_activities.csv"
+ACTIVITY_TABLE = r"D:\canonical_v3_activities.csv"
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
@@ -326,8 +326,9 @@ CARBON_COVERAGE_WARN_PCT = 90.0    # 3.1 flag when the biomass raster covers les
 # ============================ RESULT HANDOFF ============================
 # Each notebook writes its results here as JSON, and the next notebook reads them back. This is
 # the only channel between notebooks, because notebook filenames (for example
-# "F02-P2 General.ipynb") are not importable Python module names.
-OUTPUT_DIR = r"outputs"
+# "F02-P2 General.ipynb") are not importable Python module names. common.save_results creates
+# this folder if it does not exist. Kept on D: next to the datasets.
+OUTPUT_DIR = r"D:\NBSTOOLV3\outputs"
 
 # Stage keys used in the result filenames: <aoi_id>__<stage>.json
 STAGE_GENERAL = "F02-P2-general"
