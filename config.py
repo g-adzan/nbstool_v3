@@ -349,12 +349,19 @@ ARR_ZONE_DRY_MONTH_MM = 100.0
 ARR_ZONE_DRY_SEASON_MONTHS = 3
 ARR_DRYLAND_DEFAULT_ZONE = 2   # seasonal lowland, used when zone inputs are missing
 
-# Baseline sensitivity (diagnostic). The primary result deducts a per-pixel baseline from the AGB
-# raster. On this AOI that zeroes ~all vegetated Restore land, because GEDI reads a high baseline
-# on degraded-but-vegetated sites (the unreliability ANX-B Section 4.9 flags). To compare, 5.3
-# also computes a class-based baseline: a small assumed standing biomass per current LC state,
-# matching the "small but non-zero" baseline the doc's Section 4.8 assumes for these classes.
-# VALUES ARE PLACEHOLDERS for team calibration; they are not from the doc.
+# Baseline mode for the primary 5.3 result (team decision, 2026-07-29):
+#   "class"         - small assumed standing biomass per current LC state (ARR_BASELINE_CLASS_MGHA).
+#                     This is the OFFICIAL mode. It matches the "small but non-zero" baseline the
+#                     doc's Section 4.8 assumes for degraded classes, and avoids the GEDI problem.
+#   "per_pixel_agb" - the per-pixel AGB raster baseline. Kept as a diagnostic only: on vegetated
+#                     Restore land GEDI reads a high baseline (Section 4.9) and zeroes the result.
+#   "none"          - no baseline deduction (gross). Upper-bound scenario.
+# Whatever the mode, 5.3 reports all three totals in `values` for comparison.
+ARR_BASELINE_MODE = "class"
+
+# Small class-based baseline, AGB Mg/ha per current LC state. VALUES ARE PLACEHOLDERS pending
+# literature references (team is sourcing them); the number scales with these, so treat the
+# result as indicative until they are set. They are not from the doc.
 ARR_BASELINE_CLASS_MGHA = {"C4": 25.0, "C5": 5.0, "C6": 0.0}   # AGB Mg/ha per current LC state
 ARR_RESTORE_CAT_CSTATE = {                                     # Restore cat_code -> current state
     4: "C4",   # Cat 3B  Forest -> shrub / vegetation
