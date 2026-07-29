@@ -349,6 +349,22 @@ ARR_ZONE_DRY_MONTH_MM = 100.0
 ARR_ZONE_DRY_SEASON_MONTHS = 3
 ARR_DRYLAND_DEFAULT_ZONE = 2   # seasonal lowland, used when zone inputs are missing
 
+# Baseline sensitivity (diagnostic). The primary result deducts a per-pixel baseline from the AGB
+# raster. On this AOI that zeroes ~all vegetated Restore land, because GEDI reads a high baseline
+# on degraded-but-vegetated sites (the unreliability ANX-B Section 4.9 flags). To compare, 5.3
+# also computes a class-based baseline: a small assumed standing biomass per current LC state,
+# matching the "small but non-zero" baseline the doc's Section 4.8 assumes for these classes.
+# VALUES ARE PLACEHOLDERS for team calibration; they are not from the doc.
+ARR_BASELINE_CLASS_MGHA = {"C4": 25.0, "C5": 5.0, "C6": 0.0}   # AGB Mg/ha per current LC state
+ARR_RESTORE_CAT_CSTATE = {                                     # Restore cat_code -> current state
+    4: "C4",   # Cat 3B  Forest -> shrub / vegetation
+    6: "C5",   # Cat 4B  Forest -> active use
+    7: "C6",   # Cat 5   Forest -> barren
+    12: "C4",  # Cat 8C  Non-forest -> vegetation
+    14: "C5",  # Cat 9B  Non-forest -> active use
+    17: "C6",  # Cat 10  Non-forest -> barren
+}
+
 # Carbon fraction, dry matter to carbon, ANX-B Section 4.6. Mangrove 0.451, others 0.47.
 ARR_CARBON_FRACTION = {1: 0.47, 2: 0.451, 3: 0.47}
 
