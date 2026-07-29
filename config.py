@@ -52,13 +52,16 @@ LC2024_RASTER = r"D:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; kept for refere
 PROB_RASTER = r"D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run
 NATIONAL_FOREST_RISK_CSV = r"<SET: path to national_forest_risk_reference.csv>"
 
-# Natural disaster hazard, 5-class intensity (1.7)
+# Natural disaster hazard, 5-class intensity (1.7). Files in D:\NBSTOOLV3\disaster_risks.
+# That folder also has hazard_cyclone.tif and hazard_storm.tif, not wired here yet (pending a
+# decision to add them as extra hazard cards).
+HAZARD_DIR = r"D:\NBSTOOLV3\disaster_risks"
 HAZARD_RASTERS = {
-    "landslide":  r"<SET: path to hazard_landslides.tif>",
-    "flood":      r"<SET: path to hazard_flood.tif>",
-    "flashflood": r"<SET: path to hazard_flashflood.tif>",
-    "fire":       r"<SET: path to fire_hazard.tif>",
-    "drought":    r"<SET: path to hazard_drought.tif>",
+    "landslide":  rf"{HAZARD_DIR}\hazard_landslides.tif",
+    "flood":      rf"{HAZARD_DIR}\hazard_flood.tif",
+    "flashflood": rf"{HAZARD_DIR}\hazard_flashflood.tif",
+    "fire":       rf"{HAZARD_DIR}\hazard_fire.tif",
+    "drought":    rf"{HAZARD_DIR}\hazard_drought.tif",
 }
 
 # Fire susceptibility (Climate module, 3.5). Deliberately an alias, not a second path: 1.7 and

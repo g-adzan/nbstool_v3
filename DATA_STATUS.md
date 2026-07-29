@@ -20,14 +20,14 @@ AOI: all five notebooks are set to `D:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"
 | 1.4 Terrain | ✅ | slope derived from elevation DEM |
 | 1.5 Historical Deforestation | ✅ | — |
 | 1.6 Deforestation Risk | ⛔ | national risk CSV + stub `load_national_forest_risk_percentiles` |
-| 1.7 Natural Disaster Hazard | ⛔ | 5 hazard rasters |
+| 1.7 Natural Disaster Hazard | ⚠️ | 5 rasters wired (disaster_risks); verify 1–5 encoding |
 | 2.1 Forest Landscape Integrity | ⚠️ | verify class raster carries 1/2/3 |
 | 2.2 Key Biodiversity Areas | ✅ | KBA wired (`IntName`) |
 | 3.1 Current Carbon Storage | ✅ | AGB wired, BGB derived |
 | 3.2 Soil Organic Carbon | ✅ | 0–30 cm = sum of stock1+2+3 (SoilGrids depths) |
 | 3.3 Annual Temperature | ⚠️ | 12-band raster wired; verify unit + source/period label |
 | 3.4 Annual Precipitation | ⚠️ | 12-band raster wired; verify unit + source/period label |
-| 3.5 Fire Susceptibility | ⛔ | fire hazard raster (same file as 1.7 fire) |
+| 3.5 Fire Susceptibility | ⚠️ | fire wired (hazard_fire.tif); verify 1–5 encoding |
 | 3.6 Soil Classification | ⛔ | **parked** — awaiting team confirm of code→name lookup; + stub |
 | 4.1 Pathway Distribution | ⚠️ | verify prob/pathway values; runs |
 | 4.2 Activity List | ✅ | — |
@@ -35,7 +35,7 @@ AOI: all five notebooks are set to `D:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
 | 5.3 ARR Carbon Removal (ex-ante) | ⚠️ | runs directly from rasters (pathway + AGB + elevation + precip), no stage file; baseline uses PLACEHOLDER class values (C4/C5/C6), and precip/elev units to verify |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 5.3**, plus
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
 **5.1, 5.2** after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but
 need a one-time check.
 
@@ -53,8 +53,8 @@ need a one-time check.
 
 - [ ] **National forest risk reference** — `NATIONAL_FOREST_RISK_CSV` (1.6). Per-country
       percentile breakpoints of `prob.tif`.
-- [ ] **Hazard rasters ×5** — `HAZARD_RASTERS`: landslide, flood, flashflood, fire, drought
-      (1.7). The `fire` file is also reused by 3.5.
+- [x] **Hazard rasters ×5** — wired from `D:\NBSTOOLV3\disaster_risks` (landslide, flood,
+      flashflood, fire, drought). Folder also has cyclone + storm (not wired; pending decision).
 - [x] **Soil organic carbon depths** — resolved: SoilGrids 0-5/5-15/15-30/30-60/60-100 cm; 3.2 sums the top three for 0–30 cm.
 - [ ] **Soil class code→name lookup** (3.6) — PARKED, team to confirm the legend for `soil_groups.tif` (0–29). Not assumed alphabetical.
 
@@ -83,6 +83,7 @@ need a one-time check.
 | `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived), 5.3 (dryland zone) |
 | `FLII_FOREST/CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
 | `WORLDCLIM_TAVG/PREC_RASTER` | `D:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4; PREC also 5.3 (dryland zone) |
+| `HAZARD_RASTERS` (5) | `D:\NBSTOOLV3\disaster_risks\hazard_*.tif` | 1.7, 3.5 (fire) |
 | `SOIL_CLASS_RASTER` | `D:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
 
 ---
@@ -92,6 +93,8 @@ need a one-time check.
 - [ ] `PROB_RASTER` is UInt16, 0–65535 = 0–100 (1.6).
 - [ ] FLII class raster codes are 1/2/3 = Low/Medium/High (2.1).
 - [ ] 1.2 admin field names `GID_0/1/2`, `NAME_1/2`, `COUNTRY` match (they do in this file).
+- [ ] Hazard rasters encode 1–5 (Very Low..Very High); `hazard_landslides` is int8, so the
+      class values need a look on first run (1.7, 3.5).
 - [ ] `temperature_v3` unit is °C and `precipitation_v3` is mm; confirm the source/period so the
       `WORLDCLIM_*` labels are right (3.3, 3.4). **5.3 also depends on the precip unit being mm**:
       the dryland zone thresholds (annual > 2000 mm, dry month < 100 mm) assume mm/month.
@@ -102,6 +105,5 @@ need a one-time check.
 
 ## 6. Highest-impact next steps
 
-1. **Hazard rasters** → one set unblocks 1.7 and 3.5.
-2. **National risk CSV** + implement `load_national_forest_risk_percentiles` → unblocks 1.6.
+1. **National risk CSV** + implement `load_national_forest_risk_percentiles` → unblocks 1.6.
 3. **Soil class lookup** (parked) + implement `load_soil_class_table` → unblocks 3.6.
