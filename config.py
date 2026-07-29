@@ -16,13 +16,16 @@ REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the tea
 # pathway band-2 code -> Axis 3 class (1 Dryland, 2 Mangrove, 3 Peatland); band-2 0 (none) -> Other.
 PATHWAY_ECO_TO_AXIS3 = {1: 1, 4: 1, 2: 2, 3: 3}   # 1 dryland forest & 4 savanna both -> 1 Dryland
 
-# Administrative boundaries, GADM v4.1 (1.2)
-GADM_L0 = r"<SET: path to GADM level 0 (country) polygons>"
-GADM_L1 = r"<SET: path to GADM level 1 (province) polygons>"
-GADM_L2 = r"<SET: path to GADM level 2 (district) polygons>"
-GADM_COUNTRY_FIELD  = "COUNTRY"   # verify against your GADM (COUNTRY or NAME_0)
-GADM_PROVINCE_FIELD = "NAME_1"
-GADM_DISTRICT_FIELD = "NAME_2"
+# Administrative boundaries (1.2). ONE district-level shapefile carrying GADM-style fields for
+# all three levels (GID_0/NAME_0/COUNTRY, GID_1/NAME_1, GID_2/NAME_2). 1.2 dissolves it by the
+# level id to build country / province / district, so no separate L0/L1/L2 files are needed.
+ADMIN_BOUNDARIES = r"E:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp"
+# per level: (id field to dissolve on, name field to display, parent name field or None)
+ADMIN_LEVELS = {
+    "country":  ("GID_0", "COUNTRY", None),
+    "province": ("GID_1", "NAME_1", "COUNTRY"),
+    "district": ("GID_2", "NAME_2", "NAME_1"),
+}
 
 # Protected areas, WDPA (1.3)
 WDPA_POLYGON = r"E:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
@@ -66,7 +69,7 @@ FLII_FOREST_RASTER = r"D:\NBSTOOLV3\flii_mosaic_SEA_300m.tif"         # continuo
 FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
-KBA_POLYGON = r"<SET: path to KBA_polygon.shp>"
+KBA_POLYGON = r"E:\NBSTOOLV3\SouthEast_Asia_KBA.shp"   # name field IntName (2.2 uses it)
 
 # Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
 # Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
@@ -85,23 +88,28 @@ ROOT_TO_SHOOT_RATIO = 0.28
 # BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # reinstate when a mapped BGB layer exists
 
 # Soil organic carbon (Climate module, 3.2). Values are CARBON, tC/ha, not biomass and not CO2e.
-SOIL_CARBON_RASTER = r"<SET: path to soil_carbon.tif>"   # SOC stock, tC/ha
-SOIL_CARBON_DEPTH_CM = 30   # depth the raster represents; label every SOC figure with it
+# FIVE depth-layer rasters are available (soil_carbon_stock1..5_t_ha.tif). 3.2 wants ONE stock
+# for a stated depth. DECISION PENDING: which depth interval each stock layer is, and whether
+# 3.2 should report 0-30 cm (sum of the top intervals) or the full profile. Until confirmed,
+# SOIL_CARBON_RASTER stays unset so 3.2 does not read the wrong layer.
+SOIL_CARBON_STOCK_RASTERS = [
+    rf"E:\NBSTOOLV3\soil_carbon_stock{i}_t_ha.tif" for i in range(1, 6)
+]
+SOIL_CARBON_RASTER = r"<SET: pick/sum from SOIL_CARBON_STOCK_RASTERS once depths are confirmed>"
+SOIL_CARBON_DEPTH_CM = 30   # depth the reported stock represents; label every SOC figure with it
 
-# WorldClim monthly climatology (Climate module, 3.3 and 3.4).
-# NOT current climate: v2.1 is a 1970-2000 normal. Every figure derived from it must be labelled
-# with the period, because mean temperature in SEA has risen since that window closed.
-WORLDCLIM_VERSION    = "2.1"
-WORLDCLIM_PERIOD     = "1970-2000"
-WORLDCLIM_RESOLUTION = "30s"   # about 1 km at the equator
+# Monthly climatology (Climate module, 3.3 and 3.4). Each variable is ONE 12-band raster, band
+# m = month m (Jan..Dec). Read band by band by _read_monthly_stack.
+# VERIFY the source and period of these "_v3" files: the labels below are WorldClim defaults and
+# may not match. The period is written into every 3.3/3.4 result, so a wrong label mislabels the
+# output.
+WORLDCLIM_VERSION    = "v3 (verify source)"
+WORLDCLIM_PERIOD     = "verify"
+WORLDCLIM_RESOLUTION = "verify"
+WORLDCLIM_MONTHS     = 12
 
-# Twelve files per variable, in calendar order January to December.
-WORLDCLIM_TAVG_RASTERS = [
-    rf"<SET: path to wc2.1_30s_tavg_{m:02d}.tif>" for m in range(1, 13)
-]   # monthly mean temperature, degrees Celsius
-WORLDCLIM_PREC_RASTERS = [
-    rf"<SET: path to wc2.1_30s_prec_{m:02d}.tif>" for m in range(1, 13)
-]   # monthly precipitation, mm
+WORLDCLIM_TAVG_RASTER = r"E:\NBSTOOLV3\temperature_v3.tif"     # 12-band monthly mean temp, deg C (verify unit)
+WORLDCLIM_PREC_RASTER = r"E:\NBSTOOLV3\precipitation_v3.tif"   # 12-band monthly precipitation, mm (verify unit)
 
 MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -131,10 +139,12 @@ WRB_PROBABILITY_RASTERS = {
     cls: rf"<SET: path to wrb_{cls.lower()}_probability.tif>" for cls in WRB_CLASSES
 }
 
-# Interim input, available now: one categorical raster of soil class codes plus a lookup table
-# that maps each code to a WRB group name.
-SOIL_CLASS_RASTER = r"<SET: path to soil_class.tif>"        # categorical, WRB class codes
-SOIL_CLASS_TABLE  = r"<SET: path to soil_class_lookup.csv>" # columns: code, name
+# Categorical soil raster available: soil_groups.tif, 1 band, values 0-29 (30 classes).
+# STILL NEEDED: the code -> WRB name lookup. The raster codes are NOT guaranteed to follow the
+# alphabetical WRB_CLASSES order above (SoilGrids uses its own legend order), so the mapping must
+# come from the data provider, not be assumed. load_soil_class_table is also still a stub.
+SOIL_CLASS_RASTER = r"E:\NBSTOOLV3\soil_groups.tif"          # categorical, 0-29
+SOIL_CLASS_TABLE  = r"<SET: code -> WRB name lookup for soil_groups.tif>"
 
 # Which input 3.6 uses. "categorical" is the interim path and reports SHARE OF AREA.
 # "probability" is the target path and reports MEAN PROBABILITY. The two are different
