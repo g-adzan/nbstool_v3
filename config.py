@@ -244,7 +244,7 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # `QB Avoided Emissions` / `QB Carbon Sequestration` (Yes/No). The 6 ineligible categories appear
 # with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
 # To update, re-export the tab over this file.
-ACTIVITY_TABLE = r"D:\canonical_v3_activities.csv"
+ACTIVITY_TABLE = r"D:\NBSTOOLV3\canonical_v3_activities.csv"
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
