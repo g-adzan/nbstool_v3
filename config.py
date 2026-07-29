@@ -349,9 +349,16 @@ ARR_ANR_PAIRS = frozenset({(4, 1), (6, 2), (7, 2), (12, 2), (17, 2)})
 ARR_UNCERTAINTY_LOW = 0.7
 ARR_UNCERTAINTY_HIGH = 1.2
 
-# Ecosystem codes whose ARR carbon is deferred: activity and benefit still apply, no carbon
-# number. Savanna (4) stores carbon mainly in soil and roots, outside the biomass scope here.
-ARR_CARBON_DEFERRED_ECO = frozenset({4})
+# Ecosystem codes whose ARR carbon is NOT quantified: the activity and benefits still apply, but
+# no carbon number is produced. 5.3 skips any (cat_code, ecosystem) in ARR_SEQ_PAIRS whose
+# ecosystem is listed here, and reports the area as deferred instead.
+#   4 savanna    : methodological deferral. Savanna stores carbon mainly in soil and roots,
+#                  outside the biomass scope, and has no biomass rates.
+#   3 peatland   : TEMPORARY exclusion (team decision, 2026-07-29). The biomass method and the
+#                  peat rates exist and work; peat is held out for now. Remove 3 from this set to
+#                  re-enable peat biomass quantification (it is flagged biomass-only, since peat
+#                  soil and avoided emissions are out of scope).
+ARR_CARBON_DEFERRED_ECO = frozenset({3, 4})
 
 # ============================ CLASS CODES AND LABELS ============================
 ECOSYSTEM_CLASSES = {1: "Dryland", 2: "Mangrove", 3: "Peatland"}
