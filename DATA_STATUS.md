@@ -21,17 +21,17 @@ Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify somet
 | 2.1 Forest Landscape Integrity | ⚠️ | verify class raster carries 1/2/3 |
 | 2.2 Key Biodiversity Areas | ✅ | KBA wired (`IntName`) |
 | 3.1 Current Carbon Storage | ✅ | AGB wired, BGB derived |
-| 3.2 Soil Organic Carbon | ⛔ | **decision:** 5 depth layers, which sum to 0–30 cm |
+| 3.2 Soil Organic Carbon | ✅ | 0–30 cm = sum of stock1+2+3 (SoilGrids depths) |
 | 3.3 Annual Temperature | ⚠️ | 12-band raster wired; verify unit + source/period label |
 | 3.4 Annual Precipitation | ⚠️ | 12-band raster wired; verify unit + source/period label |
 | 3.5 Fire Susceptibility | ⛔ | fire hazard raster (same file as 1.7 fire) |
-| 3.6 Soil Classification | ⛔ | raster wired, but **needs code→name lookup** + stub `load_soil_class_table` |
+| 3.6 Soil Classification | ⛔ | **parked** — awaiting team confirm of code→name lookup; + stub |
 | 4.1 Pathway Distribution | ⚠️ | verify prob/pathway values; runs |
 | 4.2 Activity List | ✅ | — |
 | 5.1 General Benefit | ✅* | needs the F02-P4 stage JSON first |
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 3.1, 3.3, 3.4, 4.1, 4.2**, plus **5.1, 5.2**
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2**, plus **5.1, 5.2**
 after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but need a
 one-time check.
 
@@ -49,11 +49,8 @@ one-time check.
       percentile breakpoints of `prob.tif`.
 - [ ] **Hazard rasters ×5** — `HAZARD_RASTERS`: landslide, flood, flashflood, fire, drought
       (1.7). The `fire` file is also reused by 3.5.
-- [ ] **Soil organic carbon — depth decision** — `soil_carbon_stock1..5_t_ha.tif` are wired as
-      `SOIL_CARBON_STOCK_RASTERS`, but which layers sum to the reported depth is unconfirmed
-      (3.2). `SOIL_CARBON_RASTER` stays unset until then.
-- [ ] **Soil class code→name lookup** — `soil_groups.tif` (0–29) is wired, but the code→WRB name
-      table (`SOIL_CLASS_TABLE`) is missing; codes are not assumed alphabetical (3.6).
+- [x] **Soil organic carbon depths** — resolved: SoilGrids 0-5/5-15/15-30/30-60/60-100 cm; 3.2 sums the top three for 0–30 cm.
+- [ ] **Soil class code→name lookup** (3.6) — PARKED, team to confirm the legend for `soil_groups.tif` (0–29). Not assumed alphabetical.
 
 ---
 
@@ -96,7 +93,6 @@ one-time check.
 
 ## 6. Highest-impact next steps
 
-1. **Confirm soil carbon depths** → unblocks 3.2.
-2. **Soil class code→name lookup** + implement `load_soil_class_table` → unblocks 3.6.
-3. **Hazard rasters** → one set unblocks 1.7 and 3.5.
-4. **National risk CSV** + implement `load_national_forest_risk_percentiles` → unblocks 1.6.
+1. **Hazard rasters** → one set unblocks 1.7 and 3.5.
+2. **National risk CSV** + implement `load_national_forest_risk_percentiles` → unblocks 1.6.
+3. **Soil class lookup** (parked) + implement `load_soil_class_table` → unblocks 3.6.

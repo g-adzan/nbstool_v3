@@ -88,14 +88,12 @@ ROOT_TO_SHOOT_RATIO = 0.28
 # BGB_RASTER = r"<SET: path to bgb_mgha.tif>"   # reinstate when a mapped BGB layer exists
 
 # Soil organic carbon (Climate module, 3.2). Values are CARBON, tC/ha, not biomass and not CO2e.
-# FIVE depth-layer rasters are available (soil_carbon_stock1..5_t_ha.tif). 3.2 wants ONE stock
-# for a stated depth. DECISION PENDING: which depth interval each stock layer is, and whether
-# 3.2 should report 0-30 cm (sum of the top intervals) or the full profile. Until confirmed,
-# SOIL_CARBON_RASTER stays unset so 3.2 does not read the wrong layer.
+# Five SoilGrids depth-interval rasters: stock1..5 = 0-5, 5-15, 15-30, 30-60, 60-100 cm.
+# 3.2 reports 0-30 cm, so it SUMS the top three (stock1 + stock2 + stock3) per pixel.
 SOIL_CARBON_STOCK_RASTERS = [
     rf"E:\NBSTOOLV3\soil_carbon_stock{i}_t_ha.tif" for i in range(1, 6)
 ]
-SOIL_CARBON_RASTER = r"<SET: pick/sum from SOIL_CARBON_STOCK_RASTERS once depths are confirmed>"
+SOIL_CARBON_0_30_RASTERS = SOIL_CARBON_STOCK_RASTERS[:3]   # 0-5, 5-15, 15-30 cm
 SOIL_CARBON_DEPTH_CM = 30   # depth the reported stock represents; label every SOC figure with it
 
 # Monthly climatology (Climate module, 3.3 and 3.4). Each variable is ONE 12-band raster, band
