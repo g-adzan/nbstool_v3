@@ -5,7 +5,7 @@ run. Update the checkboxes as data arrives. Last checked: 2026-07-28 (after the 
 
 Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify something on first run.
 
-AOI: all five notebooks are set to `E:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"` (same id so the stage JSON handoff matches).
+AOI: all five notebooks are set to `D:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"` (same id so the stage JSON handoff matches).
 
 
 ---
@@ -69,18 +69,18 @@ one-time check.
 
 | Config | File | Used by |
 |---|---|---|
-| `PATHWAY_RASTER` | `E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif` | 4.1, 4.2, 1.1, 5.2 |
+| `PATHWAY_RASTER` | `D:\NBSTOOLV3\SEA_NBS_PATHWAY.tif` | 4.1, 4.2, 1.1, 5.2 |
 | `ACTIVITY_TABLE` | repo `canonical_v3_activities.csv` | 4.2 |
-| `AGB_RASTER` (+ derived BGB) | `E:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.2 |
-| `ADMIN_BOUNDARIES` | `E:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp` | 1.2 |
-| `WDPA_POLYGON` | `E:\NBSTOOLV3\WDPA_SEA.shp` | 1.3 |
-| `KBA_POLYGON` | `E:\NBSTOOLV3\SouthEast_Asia_KBA.shp` | 2.2 |
-| `FC2014/FC2024/LC2024_RASTER` | `E:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5 |
-| `PROB_RASTER` | `E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6, 5.2 |
-| `ELEVATION_RASTER` | `E:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived) |
+| `AGB_RASTER` (+ derived BGB) | `D:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif` | 3.1, 5.2 |
+| `ADMIN_BOUNDARIES` | `D:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp` | 1.2 |
+| `WDPA_POLYGON` | `D:\NBSTOOLV3\WDPA_SEA.shp` | 1.3 |
+| `KBA_POLYGON` | `D:\NBSTOOLV3\SouthEast_Asia_KBA.shp` | 2.2 |
+| `FC2014/FC2024/LC2024_RASTER` | `D:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5 |
+| `PROB_RASTER` | `D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6, 5.2 |
+| `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived) |
 | `FLII_FOREST/CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
-| `WORLDCLIM_TAVG/PREC_RASTER` | `E:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4 |
-| `SOIL_CLASS_RASTER` | `E:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
+| `WORLDCLIM_TAVG/PREC_RASTER` | `D:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4 |
+| `SOIL_CLASS_RASTER` | `D:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
 
 ---
 

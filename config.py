@@ -19,7 +19,7 @@ PATHWAY_ECO_TO_AXIS3 = {1: 1, 4: 1, 2: 2, 3: 3}   # 1 dryland forest & 4 savanna
 # Administrative boundaries (1.2). ONE district-level shapefile carrying GADM-style fields for
 # all three levels (GID_0/NAME_0/COUNTRY, GID_1/NAME_1, GID_2/NAME_2). 1.2 dissolves it by the
 # level id to build country / province / district, so no separate L0/L1/L2 files are needed.
-ADMIN_BOUNDARIES = r"E:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp"
+ADMIN_BOUNDARIES = r"D:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp"
 # per level: (id field to dissolve on, name field to display, parent name field or None)
 ADMIN_LEVELS = {
     "country":  ("GID_0", "COUNTRY", None),
@@ -28,24 +28,24 @@ ADMIN_LEVELS = {
 }
 
 # Protected areas, WDPA (1.3)
-WDPA_POLYGON = r"E:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
+WDPA_POLYGON = r"D:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
 # Terrain (1.4). One continuous elevation raster in metres. Slope is DERIVED from it by the tool
 # (slope_percent_from_dem), so no separate slope raster is needed. 1.4 bins both itself; the
 # inputs are not pre-classified.
-ELEVATION_RASTER = r"E:\NBSTOOLV3\SEA_ELEVATION_54034.tif"   # continuous metres
+ELEVATION_RASTER = r"D:\NBSTOOLV3\SEA_ELEVATION_54034.tif"   # continuous metres
 # Upper-exclusive bin edges: digitize(value, breaks) + 1 -> class code.
 ELEVATION_BREAKS = [500, 1000, 2000]   # metres  -> elevation classes 1..4
 SLOPE_BREAKS     = [8, 15, 25, 40]     # percent -> slope classes 1..5
 
 # Historical deforestation (1.5)
-FC2014_RASTER = r"E:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1
-FC2024_RASTER = r"E:\NBSTOOLV3\SEA_FC2024.tif"   # binary 0/1; forest_mask_2024 reads THIS now
+FC2014_RASTER = r"D:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1
+FC2024_RASTER = r"D:\NBSTOOLV3\SEA_FC2024.tif"   # binary 0/1; forest_mask_2024 reads THIS now
 FC2024_FOREST_CODES = [1]
-LC2024_RASTER = r"E:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; kept for reference, not the 2024 mask
+LC2024_RASTER = r"D:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; kept for reference, not the 2024 mask
 
 # Deforestation risk (1.6)
-PROB_RASTER = r"E:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run
+PROB_RASTER = r"D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run
 NATIONAL_FOREST_RISK_CSV = r"<SET: path to national_forest_risk_reference.csv>"
 
 # Natural disaster hazard, 5-class intensity (1.7)
@@ -69,13 +69,13 @@ FLII_FOREST_RASTER = r"D:\NBSTOOLV3\flii_mosaic_SEA_300m.tif"         # continuo
 FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
-KBA_POLYGON = r"E:\NBSTOOLV3\SouthEast_Asia_KBA.shp"   # name field IntName (2.2 uses it)
+KBA_POLYGON = r"D:\NBSTOOLV3\SouthEast_Asia_KBA.shp"   # name field IntName (2.2 uses it)
 
 # Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
 # Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
 # tool applies the carbon fraction and the CO2 conversion itself (CARBON_FRACTION, CO2_PER_C), so
 # both conversions stay visible here rather than hidden upstream.
-AGB_RASTER = r"E:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif"   # aboveground biomass, Mg/ha
+AGB_RASTER = r"D:\NBSTOOLV3\AGBD_GEDI_AEF_pred_SEA_2024.tif"   # aboveground biomass, Mg/ha
 
 # Belowground biomass is DERIVED from AGB by a fixed root-to-shoot ratio, not read from a raster:
 #     BGB_Mg/ha = AGB_Mg/ha * ROOT_TO_SHOOT_RATIO
@@ -91,7 +91,7 @@ ROOT_TO_SHOOT_RATIO = 0.28
 # Five SoilGrids depth-interval rasters: stock1..5 = 0-5, 5-15, 15-30, 30-60, 60-100 cm.
 # 3.2 reports 0-30 cm, so it SUMS the top three (stock1 + stock2 + stock3) per pixel.
 SOIL_CARBON_STOCK_RASTERS = [
-    rf"E:\NBSTOOLV3\soil_carbon_stock{i}_t_ha.tif" for i in range(1, 6)
+    rf"D:\NBSTOOLV3\soil_carbon_stock{i}_t_ha.tif" for i in range(1, 6)
 ]
 SOIL_CARBON_0_30_RASTERS = SOIL_CARBON_STOCK_RASTERS[:3]   # 0-5, 5-15, 15-30 cm
 SOIL_CARBON_DEPTH_CM = 30   # depth the reported stock represents; label every SOC figure with it
@@ -106,8 +106,8 @@ WORLDCLIM_PERIOD     = "verify"
 WORLDCLIM_RESOLUTION = "verify"
 WORLDCLIM_MONTHS     = 12
 
-WORLDCLIM_TAVG_RASTER = r"E:\NBSTOOLV3\temperature_v3.tif"     # 12-band monthly mean temp, deg C (verify unit)
-WORLDCLIM_PREC_RASTER = r"E:\NBSTOOLV3\precipitation_v3.tif"   # 12-band monthly precipitation, mm (verify unit)
+WORLDCLIM_TAVG_RASTER = r"D:\NBSTOOLV3\temperature_v3.tif"     # 12-band monthly mean temp, deg C (verify unit)
+WORLDCLIM_PREC_RASTER = r"D:\NBSTOOLV3\precipitation_v3.tif"   # 12-band monthly precipitation, mm (verify unit)
 
 MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -141,7 +141,7 @@ WRB_PROBABILITY_RASTERS = {
 # STILL NEEDED: the code -> WRB name lookup. The raster codes are NOT guaranteed to follow the
 # alphabetical WRB_CLASSES order above (SoilGrids uses its own legend order), so the mapping must
 # come from the data provider, not be assumed. load_soil_class_table is also still a stub.
-SOIL_CLASS_RASTER = r"E:\NBSTOOLV3\soil_groups.tif"          # categorical, 0-29
+SOIL_CLASS_RASTER = r"D:\NBSTOOLV3\soil_groups.tif"          # categorical, 0-29
 SOIL_CLASS_TABLE  = r"<SET: code -> WRB name lookup for soil_groups.tif>"
 
 # Which input 3.6 uses. "categorical" is the interim path and reports SHARE OF AREA.
@@ -161,7 +161,7 @@ WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not s
 # v3 drops the secondary pathway entirely, moves the ecosystem to band 2, and puts the 17 class
 # category index in band 3. Reading a v2 raster with these constants, or the reverse, silently
 # swaps ecosystem and cat_code.
-PATHWAY_RASTER = r"E:\NBSTOOLV3\SEA_NBS_PATHWAY.tif"
+PATHWAY_RASTER = r"D:\NBSTOOLV3\SEA_NBS_PATHWAY.tif"
 
 PATHWAY_BAND           = 1   # primary pathway, exactly one value per pixel
 PATHWAY_ECOSYSTEM_BAND = 2   # reference ecosystem, passed through for activity selection
