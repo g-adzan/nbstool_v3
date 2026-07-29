@@ -53,8 +53,8 @@ PROB_RASTER = r"D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 sc
 NATIONAL_FOREST_RISK_CSV = r"<SET: path to national_forest_risk_reference.csv>"
 
 # Natural disaster hazard, 5-class intensity (1.7). Files in D:\NBSTOOLV3\disaster_risks.
-# That folder also has hazard_cyclone.tif and hazard_storm.tif, not wired here yet (pending a
-# decision to add them as extra hazard cards).
+# That folder also has hazard_cyclone.tif and hazard_storm.tif; deliberately NOT wired,
+# the team keeps 1.7 to these five hazards.
 HAZARD_DIR = r"D:\NBSTOOLV3\disaster_risks"
 HAZARD_RASTERS = {
     "landslide":  rf"{HAZARD_DIR}\hazard_landslides.tif",

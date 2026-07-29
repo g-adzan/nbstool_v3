@@ -54,7 +54,7 @@ need a one-time check.
 - [ ] **National forest risk reference** — `NATIONAL_FOREST_RISK_CSV` (1.6). Per-country
       percentile breakpoints of `prob.tif`.
 - [x] **Hazard rasters ×5** — wired from `D:\NBSTOOLV3\disaster_risks` (landslide, flood,
-      flashflood, fire, drought). Folder also has cyclone + storm (not wired; pending decision).
+      flashflood, fire, drought). Folder also has cyclone + storm, deliberately left out (team keeps 1.7 to five hazards).
 - [x] **Soil organic carbon depths** — resolved: SoilGrids 0-5/5-15/15-30/30-60/60-100 cm; 3.2 sums the top three for 0–30 cm.
 - [ ] **Soil class code→name lookup** (3.6) — PARKED, team to confirm the legend for `soil_groups.tif` (0–29). Not assumed alphabetical.
 
