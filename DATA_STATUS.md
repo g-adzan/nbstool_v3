@@ -5,6 +5,9 @@ run. Update the checkboxes as data arrives. Last checked: 2026-07-28 (after the 
 
 Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify something on first run.
 
+AOI: all five notebooks are set to `E:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"` (same id so the stage JSON handoff matches).
+
+
 ---
 
 ## 1. Section runnability
