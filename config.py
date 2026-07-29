@@ -17,14 +17,18 @@ REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the tea
 PATHWAY_ECO_TO_AXIS3 = {1: 1, 4: 1, 2: 2, 3: 3}   # 1 dryland forest & 4 savanna both -> 1 Dryland
 
 # Administrative boundaries (1.2). ONE district-level shapefile carrying GADM-style fields for
-# all three levels (GID_0/NAME_0/COUNTRY, GID_1/NAME_1, GID_2/NAME_2). 1.2 dissolves it by the
-# level id to build country / province / district, so no separate L0/L1/L2 files are needed.
+# all three levels. 1.2 dissolves it per level to build country / province / district, so no
+# separate L0/L1/L2 files are needed.
+# NB: dissolve by the NAME columns, NOT the GID columns. In this "(revised)" file GID_1 and GID_2
+# are BLANK for Indonesia (the province/district live in NAME_1/NAME_2), so grouping by GID drops
+# every Indonesian unit. The ancestor names are included in each level's group so same-named
+# units in different parents are not merged.
 ADMIN_BOUNDARIES = r"D:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp"
-# per level: (id field to dissolve on, name field to display, parent name field or None)
+# per level: (columns to group on, name field to display, parent name field or None)
 ADMIN_LEVELS = {
-    "country":  ("GID_0", "COUNTRY", None),
-    "province": ("GID_1", "NAME_1", "COUNTRY"),
-    "district": ("GID_2", "NAME_2", "NAME_1"),
+    "country":  (["COUNTRY"], "COUNTRY", None),
+    "province": (["COUNTRY", "NAME_1"], "NAME_1", "COUNTRY"),
+    "district": (["COUNTRY", "NAME_1", "NAME_2"], "NAME_2", "NAME_1"),
 }
 
 # Protected areas, WDPA (1.3)
