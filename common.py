@@ -54,6 +54,7 @@ from config import (
     FC2024_RASTER,
     FC2024_FOREST_CODES,
     CSV_OUTPUT_DIR,
+    NATIONAL_FOREST_RISK_CSV,
     OUTPUT_DIR,
     RASTER_OUTPUT_DIR,
     REFERENCE_CRS,
@@ -333,9 +334,31 @@ def load_soil_class_table(path: str) -> dict[int, str]:
 def load_national_forest_risk_percentiles(country: str) -> dict[int, float] | None:
     """Percentile breakpoints of national forest deforestation risk, on the 0 to 100 scale.
 
-    Returns {10: value, 20: value, ... 90: value}, or None when the country is missing.
+    Reads NATIONAL_FOREST_RISK_CSV: one row per country, a `country` column plus `p10`..`p90`
+    columns (risk values on the 0-100 scale). Returns {10: value, ..., 90: value} for the given
+    country, or None when the file does not exist, the country is not in it, or the row has no
+    usable percentile values. 1.6 treats None as "no national reference", not an error, so a
+    missing or partial table degrades gracefully instead of crashing.
     """
-    raise NotImplementedError("Data access stub. Wire to NATIONAL_FOREST_RISK_CSV.")
+    if not Path(NATIONAL_FOREST_RISK_CSV).exists():
+        return None
+
+    df = pd.read_csv(NATIONAL_FOREST_RISK_CSV)
+    df.columns = [c.strip().lower() for c in df.columns]
+    ccol = "country" if "country" in df.columns else df.columns[0]
+
+    match = df[df[ccol].astype(str).str.strip().str.lower() == str(country).strip().lower()]
+    if match.empty:
+        return None
+    row = match.iloc[0]
+
+    breakpoints: dict[int, float] = {}
+    for p in range(10, 100, 10):
+        for key in (f"p{p}", str(p), f"pct{p}", f"p_{p}"):
+            if key in df.columns and pd.notna(row[key]):
+                breakpoints[p] = float(row[key])
+                break
+    return breakpoints or None
 
 
 # ============================ ZONAL TABULATION ============================

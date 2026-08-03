@@ -77,7 +77,10 @@ LC_TOP_N = 6   # 1.8 subset table: the N largest land cover classes
 
 # Deforestation risk (1.6)
 PROB_RASTER = r"D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run
-NATIONAL_FOREST_RISK_CSV = r"<SET: path to national_forest_risk_reference.csv>"
+# Per-country percentile breakpoints of prob.tif over that country's forest, 0-100 scale.
+# CSV columns: country, p10, p20, p30, p40, p50, p60, p70, p80, p90.
+# If the file is missing or a country is absent, 1.6 reports "no national reference" (no crash).
+NATIONAL_FOREST_RISK_CSV = r"D:\NBSTOOLV3\national_forest_risk_reference.csv"
 
 # Natural disaster hazard, 5-class intensity (1.7). Files in D:\NBSTOOLV3\disaster_risks.
 # That folder also has hazard_cyclone.tif and hazard_storm.tif; deliberately NOT wired,
