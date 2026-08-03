@@ -5,7 +5,12 @@ run. Update the checkboxes as data arrives. Last checked: 2026-07-29 (after 5.3 
 
 Legend: ✅ ready · ⛔ blocked (data or code) · ⚠️ runs, but verify something on first run.
 
-AOI: all five notebooks are set to `D:\NBSTOOLV3\AOI1.shp` with `aoi_id = "aoi1"` (same id so the stage JSON handoff matches).
+AOI + outputs (one place): set `AOI_PATH` and `AOI_ID` in `config.py`, then RESTART every
+notebook kernel. Outputs go to `D:\NBSTOOLV3\OUTPUTS\<AOI_ID>\`: JSON stage handoff in the
+folder, saved GeoTIFFs under `rasters\`. Each section writes its derived output raster
+automatically when its cell runs (via `save_raster` in `show_result`). Sections that save a
+raster: 1.1, 1.4, 1.5, 1.7, 2.1, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1 (vector sections 1.2/1.3/2.2/4.2
+and the numeric 5.x produce none).
 
 
 ---
