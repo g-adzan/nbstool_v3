@@ -15,8 +15,9 @@ construction), and the data-access layer in `common.py` is implemented: `load_ra
 (rasterio), `load_vector_intersecting` (geopandas) and `load_activity_table` (pandas). Most
 sections run today against the datasets wired in `config.py`.
 
-Two data-access stubs still raise `NotImplementedError` until their sections are used:
-`load_soil_class_table` (3.6) and `load_national_forest_risk_percentiles` (1.6).
+One data-access stub still raises `NotImplementedError` until its section is used:
+`load_soil_class_table` (3.6, parked pending the soil legend). 1.6's loader is implemented but
+needs its CSV built once with `build_national_risk_reference.py`.
 
 **`DATA_STATUS.md` is the source of truth for what is wired, what data is still missing, and
 which sections run.** Read it first.
