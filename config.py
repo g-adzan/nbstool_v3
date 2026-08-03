@@ -62,7 +62,17 @@ SLOPE_BREAKS     = [8, 15, 25, 40]     # percent -> slope classes 1..5
 FC2014_RASTER = r"D:\NBSTOOLV3\SEA_FC2014.tif"   # binary 0/1
 FC2024_RASTER = r"D:\NBSTOOLV3\SEA_FC2024.tif"   # binary 0/1; forest_mask_2024 reads THIS now
 FC2024_FOREST_CODES = [1]
-LC2024_RASTER = r"D:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; kept for reference, not the 2024 mask
+LC2024_RASTER = r"D:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; used by 1.8 Land Cover (not the 2024 mask)
+
+# LC 2024 legend (RLCMS, 20 classes; 0 = no data). Names from the "Class Mapping" sheet of the
+# NBS Pathway Logic workbook. Used by 1.8 Land Cover.
+LC2024_CLASSES = {
+    1: "Flooded forest", 2: "Rubber", 3: "Palm", 4: "Plantation", 5: "Crop plantation",
+    6: "Mangrove", 7: "Deciduous", 8: "Evergreen", 9: "Shrubland", 10: "Mixed forest",
+    11: "Snow", 12: "Water", 13: "Aquaculture", 14: "Rice", 15: "Building", 16: "Cropland",
+    17: "Grassland", 18: "Wetland", 19: "Bareland", 20: "Other land",
+}
+LC_TOP_N = 6   # 1.8 subset table: the N largest land cover classes
 
 # Deforestation risk (1.6)
 PROB_RASTER = r"D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif"   # verify UInt16 0-65535 scale on first run

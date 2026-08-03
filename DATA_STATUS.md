@@ -9,7 +9,7 @@ AOI + outputs (one place): set `AOI_PATH` and `AOI_ID` in `config.py`, then REST
 notebook kernel. Outputs go to `D:\NBSTOOLV3\OUTPUTS\<AOI_ID>\`: JSON stage handoff in the
 folder, saved GeoTIFFs under `rasters\`. Each section writes its derived output raster
 automatically when its cell runs (via `save_raster` in `show_result`). Sections that save a
-raster: 1.1, 1.4, 1.5, 1.7, 2.1, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1 (vector sections 1.2/1.3/2.2/4.2
+raster: 1.1, 1.4, 1.5, 1.7, 1.8, 2.1, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1 (vector sections 1.2/1.3/2.2/4.2
 and the numeric 5.x produce none).
 
 
@@ -26,6 +26,7 @@ and the numeric 5.x produce none).
 | 1.5 Historical Deforestation | ✅ | — |
 | 1.6 Deforestation Risk | ⛔ | national risk CSV + stub `load_national_forest_risk_percentiles` |
 | 1.7 Natural Disaster Hazard | ⚠️ | 5 rasters wired (disaster_risks); verify 1–5 encoding |
+| 1.8 Land Cover | ✅ | LC2024 20-class map; full + top-6 tables |
 | 2.1 Forest Landscape Integrity | ⚠️ | verify class raster carries 1/2/3 |
 | 2.2 Key Biodiversity Areas | ✅ | KBA wired (`IntName`) |
 | 3.1 Current Carbon Storage | ✅ | AGB wired, BGB derived |
@@ -40,7 +41,7 @@ and the numeric 5.x produce none).
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
 | 5.3 ARR Carbon Removal (ex-ante) | ⚠️ | runs directly from rasters (pathway + AGB + elevation + precip), no stage file; baseline uses PLACEHOLDER class values (C4/C5/C6), and precip/elev units to verify |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
 **5.1, 5.2** after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but
 need a one-time check.
 
@@ -83,7 +84,7 @@ need a one-time check.
 | `ADMIN_BOUNDARIES` | `D:\NBSTOOLV3\SEA_Administrative_Boundaries_4326_(revised).shp` | 1.2 |
 | `WDPA_POLYGON` | `D:\NBSTOOLV3\WDPA_SEA.shp` | 1.3 |
 | `KBA_POLYGON` | `D:\NBSTOOLV3\SouthEast_Asia_KBA.shp` | 2.2 |
-| `FC2014/FC2024/LC2024_RASTER` | `D:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5 |
+| `FC2014/FC2024/LC2024_RASTER` | `D:\NBSTOOLV3\SEA_FC2014/FC2024/LC2024.tif` | 1.5; LC2024 also 1.8 |
 | `PROB_RASTER` | `D:\NBSTOOLV3\SEA_DEFRISKS_PROB.tif` | 1.6, 5.2 |
 | `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived), 5.3 (dryland zone) |
 | `FLII_FOREST/CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
