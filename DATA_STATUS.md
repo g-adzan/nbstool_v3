@@ -25,7 +25,7 @@ and the numeric 5.x produce none).
 | 1.3 Protected Areas (WDPA) | ✅ | fields verified, uses `REALM` |
 | 1.4 Terrain | ✅ | slope derived from elevation DEM |
 | 1.5 Historical Deforestation | ✅ | — |
-| 1.6 Deforestation Risk | ⛔ | national risk CSV + stub `load_national_forest_risk_percentiles` |
+| 1.6 Deforestation Risk | ⚠️ | loader done; run `build_national_risk_reference.py` once to make the CSV; graceful (no verdict) without it |
 | 1.7 Natural Disaster Hazard | ⚠️ | 5 rasters wired (disaster_risks); verify 1–5 encoding |
 | 1.8 Land Cover | ✅ | LC2024 20-class map; full + top-6 tables |
 | 2.1 Forest Landscape Integrity | ⚠️ | verify class raster carries 1/2/3 |
@@ -42,7 +42,7 @@ and the numeric 5.x produce none).
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
 | 5.3 ARR Carbon Removal (ex-ante) | ⚠️ | runs directly from rasters (pathway + AGB + elevation + precip), no stage file; baseline uses PLACEHOLDER class values (C4/C5/C6), and precip/elev units to verify |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
 **5.1, 5.2** after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but
 need a one-time check.
 
@@ -58,8 +58,9 @@ need a one-time check.
 
 ## 2. Data still missing / pending
 
-- [ ] **National forest risk reference** — `NATIONAL_FOREST_RISK_CSV` (1.6). Per-country
-      percentile breakpoints of `prob.tif`.
+- [ ] **National forest risk reference CSV** (1.6) — run `build_national_risk_reference.py`
+      once (nbs-screening env) to compute p10..p90 of prob.tif per country and write
+      `NATIONAL_FOREST_RISK_CSV`. Until then 1.6 runs but reports "no national reference".
 - [x] **Hazard rasters ×5** — wired from `D:\NBSTOOLV3\disaster_risks` (landslide, flood,
       flashflood, fire, drought). Folder also has cyclone + storm, deliberately left out (team keeps 1.7 to five hazards).
 - [x] **Soil organic carbon depths** — resolved: SoilGrids 0-5/5-15/15-30/30-60/60-100 cm; 3.2 sums the top three for 0–30 cm.
@@ -71,7 +72,7 @@ need a one-time check.
 
 - [x] `load_raster_clipped` · [x] `load_vector_intersecting` · [x] `load_activity_table`
 - [ ] `load_soil_class_table` — needed for 3.6
-- [ ] `load_national_forest_risk_percentiles` — needed for 1.6
+- [x] `load_national_forest_risk_percentiles` — implemented (reads NATIONAL_FOREST_RISK_CSV)
 
 ---
 
@@ -112,5 +113,5 @@ need a one-time check.
 
 ## 6. Highest-impact next steps
 
-1. **National risk CSV** + implement `load_national_forest_risk_percentiles` → unblocks 1.6.
-3. **Soil class lookup** (parked) + implement `load_soil_class_table` → unblocks 3.6.
+1. **Run `build_national_risk_reference.py`** to produce the 1.6 national CSV.
+2. **Soil class lookup** (parked) + implement `load_soil_class_table` → unblocks 3.6.

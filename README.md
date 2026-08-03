@@ -140,6 +140,7 @@ Paths still marked `<SET ...>` are not available yet; see `DATA_STATUS.md`.
 - `F02-P4 Pathway.ipynb` - components 4.1 and 4.2
 - `F02-P5 Benefit.ipynb` - components 5.1, 5.2, 5.3
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
+- `build_national_risk_reference.py` - one-off builder for the 1.6 national risk CSV (run once)
 - `canonical_v3_activities.csv` - activity + Triple Win benefit + QB catalog, joined on
   (cat_code, ecosystem)
 - `DATA_STATUS.md` - living checklist: what is wired, what is missing, which sections run
