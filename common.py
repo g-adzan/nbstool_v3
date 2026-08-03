@@ -483,10 +483,21 @@ class ForestMask:
     mask: np.ndarray
     pixel_area_ha: float
     area_ha: float
+    transform: object = None   # grid the mask sits on, so it can be written as a raster
+    crs: object = None
 
     @property
     def is_empty(self) -> bool:
         return self.area_ha <= 0
+
+    def as_slice(self) -> "RasterSlice":
+        """The mask as a 0/1 RasterSlice, for saving. Non-forest is 0, not masked."""
+        return RasterSlice(
+            values=np.ma.masked_array(self.mask.astype("float32"), mask=False),
+            pixel_area_ha=self.pixel_area_ha,
+            transform=self.transform,
+            crs=self.crs,
+        )
 
 
 def forest_mask_2024(aoi: AOI) -> ForestMask:
@@ -503,6 +514,8 @@ def forest_mask_2024(aoi: AOI) -> ForestMask:
         mask=mask,
         pixel_area_ha=fc.pixel_area_ha,
         area_ha=int(mask.sum()) * fc.pixel_area_ha,
+        transform=fc.transform,
+        crs=fc.crs,
     )
 
 
@@ -519,6 +532,8 @@ def forest_mask_2014(aoi: AOI) -> ForestMask:
         mask=mask,
         pixel_area_ha=fc.pixel_area_ha,
         area_ha=int(mask.sum()) * fc.pixel_area_ha,
+        transform=fc.transform,
+        crs=fc.crs,
     )
 
 
@@ -600,6 +615,9 @@ class ComponentResult:
     tables: dict[str, list] = field(default_factory=dict)
     values: dict[str, object] = field(default_factory=dict)
     flags: list[str] = field(default_factory=list)
+    # Derived output rasters this section produced, {filename_stem: RasterSlice}. show_result
+    # writes each to the per-AOI raster folder. Not serialised into the JSON handoff.
+    rasters: dict = field(default_factory=dict)
 
 
 def not_applicable(component: str, reason: str) -> ComponentResult:
@@ -629,6 +647,11 @@ def show_result(r: ComponentResult) -> None:
         display(r.values)
     for f in r.flags:
         print("FLAG:", f)
+    # Persist any derived output rasters to the per-AOI raster folder.
+    for stem, rslice in r.rasters.items():
+        if rslice is not None and rslice.transform is not None:
+            saved = save_raster(rslice, stem)
+            print("  saved raster:", saved)
 
 
 # ============================ RESULT HANDOFF ============================
@@ -650,7 +673,9 @@ def to_jsonable(obj: object) -> object:
     set semantics after a round trip. Downstream code should read it back with `set(...)`.
     """
     if is_dataclass(obj) and not isinstance(obj, type):
-        return {k: to_jsonable(v) for k, v in asdict(obj).items()}
+        # Drop 'rasters': it holds RasterSlice grids (numpy arrays + Affine), not JSON, and is
+        # persisted separately as GeoTIFFs, not in the stage handoff.
+        return {k: to_jsonable(v) for k, v in asdict(obj).items() if k != "rasters"}
     if isinstance(obj, (set, frozenset)):
         return sorted(obj, key=str)
     if isinstance(obj, dict):
