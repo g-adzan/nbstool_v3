@@ -53,6 +53,7 @@ from config import (
     FC2014_FOREST_CODES,
     FC2024_RASTER,
     FC2024_FOREST_CODES,
+    CSV_OUTPUT_DIR,
     OUTPUT_DIR,
     RASTER_OUTPUT_DIR,
     REFERENCE_CRS,
@@ -432,6 +433,21 @@ def save_raster(rslice: RasterSlice, name: str) -> Path:
     return path
 
 
+def save_table_csv(rows: list, name: str) -> Path:
+    """Write a component table to CSV under the per-AOI tables folder.
+
+    Destination is CSV_OUTPUT_DIR (config: OUTPUT_ROOT\\<AOI_ID>\\tables). `rows` is a table from
+    ComponentResult.tables, a list of dataclasses (ClassShare, HazardCard, ...) or plain dicts;
+    both become a flat DataFrame. `name` is the file stem, for example "1.8_land_cover_full".
+    """
+    out_dir = Path(CSV_OUTPUT_DIR)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{name}.csv"
+    recs = [asdict(x) if is_dataclass(x) and not isinstance(x, type) else x for x in rows]
+    pd.DataFrame(recs).to_csv(path, index=False)
+    return path
+
+
 def classify_continuous(raster: RasterSlice, breaks: Sequence[float]) -> RasterSlice:
     """Bin a continuous raster into integer class codes 1..len(breaks)+1.
 
@@ -635,6 +651,7 @@ def show_result(r: ComponentResult) -> None:
     from IPython.display import display
 
     header = r.component + ("" if r.applicable else "  (not applicable)")
+    section = r.component.split()[0] if r.component else "section"
     print(f"[{header}]")
     if r.narrative:
         print(f"  {r.narrative}")
@@ -643,6 +660,7 @@ def show_result(r: ComponentResult) -> None:
             rows = [asdict(x) if is_dataclass(x) and not isinstance(x, type) else x for x in tbl]
             print(f"  {name}:")
             display(pd.DataFrame(rows))
+            print("  saved table:", save_table_csv(tbl, f"{section}_{name}"))
     if r.values:
         display(r.values)
     for f in r.flags:

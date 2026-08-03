@@ -25,6 +25,7 @@ AOI_ID   = "aoi1"
 OUTPUT_ROOT       = r"D:\NBSTOOLV3\OUTPUTS"
 OUTPUT_DIR        = rf"{OUTPUT_ROOT}\{AOI_ID}"            # JSON stage handoff files
 RASTER_OUTPUT_DIR = rf"{OUTPUT_ROOT}\{AOI_ID}\rasters"   # saved output GeoTIFFs, one per section
+CSV_OUTPUT_DIR    = rf"{OUTPUT_ROOT}\{AOI_ID}\tables"    # saved output tables as CSV, one per table
 
 # ============================ PRE-DEFINED LAYERS (placeholders) ============================
 # Ecosystem type (1.1): derived from the pathway raster's ecosystem band (band 2), not a separate
