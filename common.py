@@ -54,6 +54,7 @@ from config import (
     FC2024_RASTER,
     FC2024_FOREST_CODES,
     OUTPUT_DIR,
+    RASTER_OUTPUT_DIR,
     REFERENCE_CRS,
 )
 
@@ -406,6 +407,29 @@ def slope_percent_from_dem(elev: RasterSlice, aoi: AOI) -> RasterSlice:
         slope_pct, mask=np.isnan(slope_pct) | np.ma.getmaskarray(elev.values)
     )
     return RasterSlice(masked, elev.pixel_area_ha, elev.transform, elev.crs)
+
+
+def save_raster(rslice: RasterSlice, name: str) -> Path:
+    """Write a RasterSlice to a GeoTIFF under the per-AOI raster output folder.
+
+    Destination is RASTER_OUTPUT_DIR (config: OUTPUT_ROOT\\<AOI_ID>\\rasters), created if needed,
+    so switching AOI_ID in config sends every saved raster to a fresh per-AOI folder. `name` is
+    the file stem, for example "1.1_ecosystem"; ".tif" is added. Masked cells are written as the
+    nodata value. Output is in REFERENCE_CRS, the grid the slice was clipped to.
+    """
+    out_dir = Path(RASTER_OUTPUT_DIR)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{name}.tif"
+
+    nodata = -9999.0
+    arr = np.ma.filled(rslice.values.astype("float32"), np.float32(nodata))
+    with rasterio.open(
+        path, "w", driver="GTiff",
+        height=arr.shape[0], width=arr.shape[1], count=1, dtype="float32",
+        crs=rslice.crs, transform=rslice.transform, nodata=nodata, compress="lzw",
+    ) as dst:
+        dst.write(arr, 1)
+    return path
 
 
 def classify_continuous(raster: RasterSlice, breaks: Sequence[float]) -> RasterSlice:

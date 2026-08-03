@@ -10,6 +10,22 @@ marked <SET ...> to your own file before running. This file also serves as the i
 # The AOI is accepted in any CRS and reprojected to this equal-area CRS for all area work.
 REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
+# ============================ AOI (change it HERE, one place) ============================
+# To switch AOI: edit these two lines, then RESTART every notebook kernel (config is cached at
+# import). Every notebook reads AOI_PATH and AOI_ID from here; do not hardcode them per notebook.
+# AOI_ID also names the per-AOI output subfolder and the stage-handoff filenames, so results for
+# different AOIs never mix.
+AOI_PATH = r"D:\NBSTOOLV3\AOI1.shp"
+AOI_ID   = "aoi1"
+
+# ============================ OUTPUTS (per AOI) ============================
+# Everything a run writes goes under OUTPUT_ROOT\<AOI_ID>: the JSON stage handoff in the folder
+# itself, and saved output rasters under a rasters\ subfolder. Switching AOI_ID above points all
+# of this at a fresh folder automatically.
+OUTPUT_ROOT       = r"D:\NBSTOOLV3\OUTPUTS"
+OUTPUT_DIR        = rf"{OUTPUT_ROOT}\{AOI_ID}"            # JSON stage handoff files
+RASTER_OUTPUT_DIR = rf"{OUTPUT_ROOT}\{AOI_ID}\rasters"   # saved output GeoTIFFs, one per section
+
 # ============================ PRE-DEFINED LAYERS (placeholders) ============================
 # Ecosystem type (1.1): derived from the pathway raster's ecosystem band (band 2), not a separate
 # raster. Dryland forest and savanna are merged into one "Dryland" class per the team.
@@ -436,11 +452,10 @@ CO2_PER_C = 44.0 / 12.0            # molecular weight ratio, tCO2e per tC
 CARBON_COVERAGE_WARN_PCT = 90.0    # 3.1 flag when the biomass raster covers less of the AOI
 
 # ============================ RESULT HANDOFF ============================
-# Each notebook writes its results here as JSON, and the next notebook reads them back. This is
-# the only channel between notebooks, because notebook filenames (for example
-# "F02-P2 General.ipynb") are not importable Python module names. common.save_results creates
-# this folder if it does not exist. Kept on D: next to the datasets.
-OUTPUT_DIR = r"D:\NBSTOOLV3\outputs"
+# Each notebook writes its results as JSON to OUTPUT_DIR (the per-AOI folder set above), and the
+# next notebook reads them back. This is the only channel between notebooks, because notebook
+# filenames (for example "F02-P2 General.ipynb") are not importable Python module names.
+# common.save_results creates the folder if it does not exist.
 
 # Stage keys used in the result filenames: <aoi_id>__<stage>.json
 STAGE_GENERAL = "F02-P2-general"
