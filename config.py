@@ -127,6 +127,26 @@ FLII_CLASSES = {1: "Low", 2: "Medium", 3: "High"}
 # Key Biodiversity Areas (Nature module, 2.2). World Database of KBAs (BirdLife / KBA Partnership).
 KBA_POLYGON = r"D:\NBSTOOLV3\SouthEast_Asia_KBA.shp"   # name field IntName (2.2 uses it)
 
+# NatureMap priority ranks (Nature module 2.6). Ranked global-priority rasters from Jung et al.
+# (2021), not raw biodiversity, carbon, or water stocks. Native resolution is 10 km
+# (100 km² per pixel), suitable for landscape-context analysis rather than site-level estimates.
+NATUREMAP_LAYERS = {
+    "Biodiversity": "Z:\Biodiversity\biodiversity_only_v3.tif", #assets-geo/v3/biodiversity_only_v3.tif
+    "Carbon":       "Z:\Biodiversity\biodiversity_carbon_v3.tif", #assets-geo/v3/biodiversity_carbon_v3.tif
+    "Water":        "Z:\Biodiversity\biodiversity_water_v3.tif", #assets-geo/v3/biodiversity_water_v3.tif
+}
+
+NATUREMAP_GRID = r"Z:\Biodiversity\globalgrid_mollweide_10km.tif" #assets-geo/v3/globalgrid_mollweide_10km.tif
+NATUREMAP_CELL_KM2 = 100
+NATUREMAP_BUDGETS = [10, 30]
+
+NATUREMAP_AOIS = {
+    "AOI_A": r"Z:\NbS_Tools\Dummy\AOI_4326.shp",
+    "AOI_B": r"Z:\NbS_Tools\Dummy\AOI3_4326.shp",
+}
+
+NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
+
 # Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
 # Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
 # tool applies the carbon fraction and the CO2 conversion itself (CARBON_FRACTION, CO2_PER_C), so
