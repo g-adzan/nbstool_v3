@@ -26,7 +26,7 @@ and the numeric 5.x produce none).
 | 1.4 Terrain | ✅ | slope derived from elevation DEM |
 | 1.5 Historical Deforestation | ✅ | — |
 | 1.6 Deforestation Risk | ⚠️ | loader done; run `build_national_risk_reference.py` once to make the CSV; graceful (no verdict) without it |
-| 1.7 Natural Disaster Hazard | ⚠️ | 5 rasters wired (disaster_risks); verify 1–5 encoding |
+| 1.7 Natural Disaster Risks | ⚠️ | 5 risk rasters wired (`RISK_RASTERS`, risk_*.tif, 4-class 1-4, 0=nodata); cyclone/drought are coarse (~11 km, ~28 km) so a small AOI may be one class |
 | 1.8 Land Cover | ✅ | LC2024 20-class map; full + top-6 tables |
 | 2.1 Forest Landscape Integrity | ⚠️ | verify class raster carries 1/2/3 |
 | 2.2 Key Biodiversity Areas | ✅ | KBA wired (`IntName`) |
@@ -91,7 +91,8 @@ need a one-time check.
 | `ELEVATION_RASTER` | `D:\NBSTOOLV3\SEA_ELEVATION_54034.tif` | 1.4 (slope derived), 5.3 (dryland zone) |
 | `FLII_FOREST/CLASS_RASTER` | `D:\NBSTOOLV3\flii_mosaic / flii_class_mosaic_SEA_300m.tif` | 2.1 |
 | `WORLDCLIM_TAVG/PREC_RASTER` | `D:\NBSTOOLV3\temperature_v3 / precipitation_v3.tif` (12-band) | 3.3, 3.4; PREC also 5.3 (dryland zone) |
-| `HAZARD_RASTERS` (5) | `D:\NBSTOOLV3\disaster_risks\hazard_*.tif` | 1.7, 3.5 (fire) |
+| `RISK_RASTERS` (5) | `D:\NBSTOOLV3\risk_*.tif` (cyclone, drought, fire, flood, landslide) | 1.7 |
+| `HAZARD_RASTERS` (5) | `D:\NBSTOOLV3\disaster_risks\hazard_*.tif` | 3.5 (fire); ex-1.7, kept until 3.5 rebuild |
 | `SOIL_CLASS_RASTER` | `D:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
 
 ---
@@ -101,8 +102,8 @@ need a one-time check.
 - [ ] `PROB_RASTER` is UInt16, 0–65535 = 0–100 (1.6).
 - [ ] FLII class raster codes are 1/2/3 = Low/Medium/High (2.1).
 - [ ] 1.2 admin field names `GID_0/1/2`, `NAME_1/2`, `COUNTRY` match (they do in this file).
-- [ ] Hazard rasters encode 1–5 (Very Low..Very High); `hazard_landslides` is int8, so the
-      class values need a look on first run (1.7, 3.5).
+- [x] 1.7 risk rasters (`risk_*.tif`) confirmed uint8, 4-class 1-4 (Very Low..High), 0=nodata.
+- [ ] 3.5 still reads the old `hazard_fire.tif` (1–5 encoding); reconcile when 3.5 is rebuilt.
 - [ ] `temperature_v3` unit is °C and `precipitation_v3` is mm; confirm the source/period so the
       `WORLDCLIM_*` labels are right (3.3, 3.4). **5.3 also depends on the precip unit being mm**:
       the dryland zone thresholds (annual > 2000 mm, dry month < 100 mm) assume mm/month.

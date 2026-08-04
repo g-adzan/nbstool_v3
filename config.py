@@ -69,7 +69,7 @@ LC2024_RASTER = r"D:\NBSTOOLV3\SEA_LC2024.tif"   # 20-class + 0; used by 1.8 Lan
 # NBS Pathway Logic workbook. Used by 1.8 Land Cover.
 LC2024_CLASSES = {
     1: "Flooded forest", 2: "Rubber", 3: "Palm", 4: "Plantation", 5: "Crop plantation",
-    6: "Mangrove", 7: "Deciduous", 8: "Evergreen", 9: "Shrubland", 10: "Mixed forest",
+    6: "Mangrove", 7: "Deciduous Forest", 8: "Evergreen Forest", 9: "Shrubland", 10: "Mixed forest",
     11: "Snow", 12: "Water", 13: "Aquaculture", 14: "Rice", 15: "Building", 16: "Cropland",
     17: "Grassland", 18: "Wetland", 19: "Bareland", 20: "Other land",
 }
@@ -97,7 +97,26 @@ HAZARD_RASTERS = {
 # Fire susceptibility (Climate module, 3.5). Deliberately an alias, not a second path: 1.7 and
 # 3.5 report the same raster in two different ways, so there must be only one path to set. If
 # these ever become two layers, split them here and say why in the 3.5 markdown cell.
+# NOTE: 1.7 has moved to the RISK_RASTERS layers below; 3.5 still reads this old fire hazard file
+# and will be reconciled when 3.5 is rebuilt. So 1.7 and 3.5 no longer read the same fire raster.
 FIRE_HAZARD_RASTER = HAZARD_RASTERS["fire"]
+
+# Natural disaster RISK, 4-class level (1.7 Natural Disaster Risks). Pre-classified risk rasters
+# in D:\NBSTOOLV3 (risk_*.tif). These are true risk layers: exposure and vulnerability are already
+# folded in upstream, so 1.7 reports risk, not bare hazard. Values are 1..4 with 0 as nodata.
+# The five layers sit at very different native resolutions (flood, landslide ~100 m; fire ~1 km;
+# cyclone ~11 km; drought ~28 km), so a small AOI may fall in one coarse cell for cyclone/drought,
+# giving a single-class distribution. That is expected, not an error.
+RISK_DIR = r"D:\NBSTOOLV3"
+RISK_RASTERS = {
+    "cyclone":   rf"{RISK_DIR}\risk_cyclone.tif",
+    "drought":   rf"{RISK_DIR}\risk_drought.tif",
+    "fire":      rf"{RISK_DIR}\risk_fire.tif",
+    "flood":     rf"{RISK_DIR}\risk_flood.tif",
+    "landslide": rf"{RISK_DIR}\risk_landslide.tif",
+}
+RISK_LEVELS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High"}
+RISK_PRESENCE_PCT = 20   # 1.7 representative level = highest class covering >= this % of AOI area
 
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
