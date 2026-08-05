@@ -87,11 +87,11 @@ NATIONAL_FOREST_RISK_CSV = r"D:\NBSTOOLV3\national_forest_risk_reference.csv"
 # the team keeps 1.7 to these five hazards.
 HAZARD_DIR = r"D:\NBSTOOLV3\disaster_risks"
 HAZARD_RASTERS = {
-    "landslide":  rf"{HAZARD_DIR}\hazard_landslides.tif",
-    "flood":      rf"{HAZARD_DIR}\hazard_flood.tif",
-    "flashflood": rf"{HAZARD_DIR}\hazard_flashflood.tif",
-    "fire":       rf"{HAZARD_DIR}\hazard_fire.tif",
-    "drought":    rf"{HAZARD_DIR}\hazard_drought.tif",
+    "landslide":  rf"{HAZARD_DIR}\hazard_landslides.tif", #assets-geo/v3/risk_landslide_v3.tif
+    "flood":      rf"{HAZARD_DIR}\hazard_flood.tif", #assets-geo/v3/risk_flood_v3.tif
+    "flashflood": rf"{HAZARD_DIR}\hazard_flashflood.tif", #assets-geo/v3/risk_flashflood_v3.tif
+    "fire":       rf"{HAZARD_DIR}\hazard_fire.tif", #assets-geo/v3/risk_fire_v3.tif
+    "drought":    rf"{HAZARD_DIR}\hazard_drought.tif", #assets-geo/v3/risk_drought_v3.tif
 }
 
 # Fire susceptibility (Climate module, 3.5). Deliberately an alias, not a second path: 1.7 and
