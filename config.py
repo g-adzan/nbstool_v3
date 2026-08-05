@@ -150,14 +150,14 @@ NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
 # -----------------------------------------------------------------------------
 # People data (F02-P2), seven pre-defined local rasters
 # -----------------------------------------------------------------------------
-POP_TOTAL_RASTER = r"D:\3_project\nbstool_v3\dataset\gridded_population_v3.tif"
-POP_FEMALE_RASTER = r"D:\3_project\nbstool_v3\dataset\female_pop_v3.tif"
-POP_MALE_RASTER = r"D:\3_project\nbstool_v3\dataset\male_pop_v3.tif"
+POP_TOTAL_RASTER = r"D:\3_project\nbstool_v3\dataset\gridded_population_v3.tif" #assets-geo/v3/gridded_population_v3.tif
+POP_FEMALE_RASTER = r"D:\3_project\nbstool_v3\dataset\female_pop_v3.tif" #assets-geo/v3/female_pop_v3.tif
+POP_MALE_RASTER = r"D:\3_project\nbstool_v3\dataset\male_pop_v3.tif" #assets-geo/v3/male_pop_v3.tif
 PEOPLE_VULNERABILITY_RASTERS = {
-    "physical": r"D:\3_project\nbstool_v3\dataset\vulnerability_physical_v3.tif",
-    "environmental": r"D:\3_project\nbstool_v3\dataset\vulnerability_natural_v3.tif",
-    "economic": r"D:\3_project\nbstool_v3\dataset\vulnerability_economic_v3.tif",
-    "social": r"D:\3_project\nbstool_v3\dataset\vulnerability_social_v3.tif",
+    "physical": r"D:\3_project\nbstool_v3\dataset\vulnerability_physical_v3.tif", #assets-geo/v3/vulnerability_physical_v3.tif
+    "environmental": r"D:\3_project\nbstool_v3\dataset\vulnerability_natural_v3.tif", #assets-geo/v3/vulnerability_natural_v3.tif
+    "economic": r"D:\3_project\nbstool_v3\dataset\vulnerability_economic_v3.tif", #assets-geo/v3/vulnerability_economic_v3.tif
+    "social": r"D:\3_project\nbstool_v3\dataset\vulnerability_social_v3.tif", #assets-geo/v3/vulnerability_social_v3.tif
 }
 PEOPLE_VULNERABILITY_LEVELS = {
     1: "Very Low",
