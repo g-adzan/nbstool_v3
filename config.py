@@ -155,7 +155,7 @@ AOH_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp" #user input
 AOH_MULTIBAND_RASTER = (
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_mamals_habitat.tif" #assets-geo/v3/mamals_habitat_v3.tif
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_reptiles_habitat.tif" #assets-geo/v3/reptiles_habitat_v3.tif
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_amphibi_habitat.tif" #assets-geo/v3/amphibi_habitat_v3.tif
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_amphibians_habitat.tif" #assets-geo/v3/amphibians_habitat_v3.tif
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_birds_habitat.tif" #assets-geo/v3/birds_habitat_v3.tif
 )
 
