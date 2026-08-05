@@ -150,14 +150,14 @@ NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
 # Area of Habitat presence screening (Nature module 2.3). The AOI polygon is intersected with the
 # stacked species-habitat raster. Bands containing DN = 1 inside the AOI are written to a dedicated
 # sheet in the existing species inventory workbook.
-AOH_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
+AOH_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp" #user input
 
 AOH_MULTIBAND_RASTER = (
-    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_habitat.tif"
+    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_habitat.tif" #assets-geo/v3/mamals_habitat_v3.tif
 )
 
 AOH_INVENTORY_EXCEL = (
-    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_inventory.xlsx"
+    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_inventory.xlsx" #assets-geo/v3/sea_mamals_inventory.xlsx
 )
 
 AOH_SPECIES_SHEET = "aoi_species"
