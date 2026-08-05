@@ -147,6 +147,42 @@ NATUREMAP_AOIS = {
 
 NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
 
+# -----------------------------------------------------------------------------
+# People data (F02-P2), seven pre-defined local rasters
+# -----------------------------------------------------------------------------
+POP_TOTAL_RASTER = r"D:\3_project\nbstool_v3\dataset\gridded_population_v3.tif"
+POP_FEMALE_RASTER = r"D:\3_project\nbstool_v3\dataset\female_pop_v3.tif"
+POP_MALE_RASTER = r"D:\3_project\nbstool_v3\dataset\male_pop_v3.tif"
+PEOPLE_VULNERABILITY_RASTERS = {
+    "physical": r"D:\3_project\nbstool_v3\dataset\vulnerability_physical_v3.tif",
+    "environmental": r"D:\3_project\nbstool_v3\dataset\vulnerability_natural_v3.tif",
+    "economic": r"D:\3_project\nbstool_v3\dataset\vulnerability_economic_v3.tif",
+    "social": r"D:\3_project\nbstool_v3\dataset\vulnerability_social_v3.tif",
+}
+PEOPLE_VULNERABILITY_LEVELS = {
+    1: "Very Low",
+    2: "Low",
+    3: "Moderate",
+    4: "High",
+    5: "Very High",
+}
+PEOPLE_AGE_GROUPS = {
+    "0-4": (1, 2),
+    "5-9": (3,),
+    "10-14": (4,),
+    "15-19": (5,),
+    "20-24": (6,),
+    "25-29": (7,),
+    "30-34": (8,),
+    "35-39": (9,),
+    "40-44": (10,),
+    "45-49": (11,),
+    "50-54": (12,),
+    "55-59": (13,),
+    "60-64": (14,),
+    "65+": (15, 16, 17, 18, 19, 20),
+}
+
 # Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
 # Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
 # tool applies the carbon fraction and the CO2 conversion itself (CARBON_FRACTION, CO2_PER_C), so
