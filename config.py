@@ -153,11 +153,14 @@ NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
 AOH_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp" #user input
 
 AOH_MULTIBAND_RASTER = (
-    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_habitat.tif" #assets-geo/v3/mamals_habitat_v3.tif
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_mamals_habitat.tif" #assets-geo/v3/mamals_habitat_v3.tif
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_reptiles_habitat.tif" #assets-geo/v3/reptiles_habitat_v3.tif
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_amphibi_habitat.tif" #assets-geo/v3/amphibi_habitat_v3.tif
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_birds_habitat.tif" #assets-geo/v3/birds_habitat_v3.tif
 )
 
 AOH_INVENTORY_EXCEL = (
-    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\sea_mamals_inventory.xlsx" #assets-geo/v3/sea_mamals_inventory.xlsx
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_inventory_iucn.xlsx" #assets-geo/v3/sea_inventory_iucn.xlsx
 )
 
 AOH_SPECIES_SHEET = "aoi_species"
