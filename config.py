@@ -163,6 +163,28 @@ AOH_INVENTORY_EXCEL = (
 AOH_SPECIES_SHEET = "aoi_species"
 AOH_TARGET_DN = 1
 
+# Key species presence (Nature module 2.5). GBIF occurrence points are intersected with the AOI,
+# then summarised by species using record count, individual count, latest event date, and the most
+# frequent Darwin Core basisOfRecord value.
+KEY_SPECIES_POINTS = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\GBIF\key_species.shp" #Postgis Database: nbs/sea/key_species
+)
+
+KEY_SPECIES_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI_4326.shp" #user input
+
+KEY_SPECIES_OUTPUT = (
+    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot"
+    r"\species_occurrence_summary.xlsx"
+)
+
+KEY_SPECIES_COLUMN = "species"
+KEY_SPECIES_COUNT_COLUMN = "individualCount"
+KEY_SPECIES_DATE_COLUMN = "eventDate"
+KEY_SPECIES_BASIS_COLUMN = "basisOfRecord"
+
+# "intersects" includes occurrence points on the AOI boundary.
+KEY_SPECIES_SPATIAL_PREDICATE = "intersects"
+
 # -----------------------------------------------------------------------------
 # People data (F02-P2), seven pre-defined local rasters
 # -----------------------------------------------------------------------------
