@@ -151,7 +151,7 @@ AOH_MULTIBAND_RASTER = (
 )
 
 AOH_INVENTORY_EXCEL = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_inventory_iucn.xlsx" #assets-geo/v3/sea_inventory_iucn.xlsx
+    IUCN_INVENTORY_PATH = r"Z:\NbS_Tools\AoH\species_iucn_v3.xlsx" #assets-geo/v3/species_iucn_v3.xlsx
 )
 
 AOH_SPECIES_SHEET = "aoi_species"
