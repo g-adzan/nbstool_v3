@@ -136,16 +136,7 @@ NATUREMAP_LAYERS = {
     "Water":        "Z:\Biodiversity\biodiversity_water_v3.tif", #assets-geo/v3/biodiversity_water_v3.tif
 }
 
-NATUREMAP_GRID = r"Z:\Biodiversity\globalgrid_mollweide_10km.tif" #assets-geo/v3/globalgrid_mollweide_10km.tif
-NATUREMAP_CELL_KM2 = 100
-NATUREMAP_BUDGETS = [10, 30]
 
-NATUREMAP_AOIS = {
-    "AOI_A": r"Z:\NbS_Tools\Dummy\AOI_4326.shp",
-    "AOI_B": r"Z:\NbS_Tools\Dummy\AOI3_4326.shp",
-}
-
-NATUREMAP_OUTPUT = r"Z:\NbS_Tools\Dummy\output"
 
 # Area of Habitat presence screening (Nature module 2.3). The AOI polygon is intersected with the
 # stacked species-habitat raster. Bands containing DN = 1 inside the AOI are written to a dedicated
