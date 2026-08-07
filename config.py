@@ -144,12 +144,11 @@ NATUREMAP_LAYERS = {
 BIODIVERSITY_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
 
 BIODIVERSITY_ROOT = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area" #assets-geo/v3/habitat_area
 )
 
 BIODIVERSITY_INVENTORY = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY"
-    r"\habitat_area\species_iucn_v3.geoparquet"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area\species_iucn_v3.geoparquet" #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
 )
 
 BIODIVERSITY_TARGET_DN = 1
