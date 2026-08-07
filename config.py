@@ -138,24 +138,22 @@ NATUREMAP_LAYERS = {
 
 
 
-# Area of Habitat presence screening (Nature module 2.3). The AOI polygon is intersected with the
-# stacked species-habitat raster. Bands containing DN = 1 inside the AOI are written to a dedicated
-# sheet in the existing species inventory workbook.
-AOH_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp" #user input
+# Biodiversity habitat intersection (Nature module 2.3). Species habitat rasters are filtered using
+# the master GeoParquet footprint, then DN = 1 pixels inside the AOI are counted to calculate habitat
+# area and % of AOI.
+BIODIVERSITY_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
 
-AOH_MULTIBAND_RASTER = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_mamals_habitat.tif" #assets-geo/v3/mamals_habitat_v3.tif
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_reptiles_habitat.tif" #assets-geo/v3/reptiles_habitat_v3.tif
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_amphibians_habitat.tif" #assets-geo/v3/amphibians_habitat_v3.tif
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\sea_birds_habitat.tif" #assets-geo/v3/birds_habitat_v3.tif
+BIODIVERSITY_ROOT = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area"
 )
 
-AOH_INVENTORY_EXCEL = (
-    IUCN_INVENTORY_PATH = r"Z:\NbS_Tools\AoH\species_iucn_v3.xlsx" #assets-geo/v3/species_iucn_v3.xlsx
+BIODIVERSITY_INVENTORY = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY"
+    r"\habitat_area\species_iucn_v3.geoparquet"
 )
 
-AOH_SPECIES_SHEET = "aoi_species"
-AOH_TARGET_DN = 1
+BIODIVERSITY_TARGET_DN = 1
+BIODIVERSITY_GEOD_ELLPS = "WGS84"
 
 # Key species presence (Nature module 2.5). GBIF occurrence points are intersected with the AOI,
 # then summarised by species using record count, individual count, latest event date, and the most
