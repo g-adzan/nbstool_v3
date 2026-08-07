@@ -141,18 +141,18 @@ NATUREMAP_LAYERS = {
 # Biodiversity habitat intersection (Nature module 2.3). Species habitat rasters are filtered using
 # the master GeoParquet footprint, then DN = 1 pixels inside the AOI are counted to calculate habitat
 # area and % of AOI.
-BIODIVERSITY_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
+USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
 
 BIODIVERSITY_ROOT = (
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area" #assets-geo/v3/habitat_area
 )
 
-BIODIVERSITY_INVENTORY = (
+INVENTORY_PATH = (
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area\species_iucn_v3.geoparquet" #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
 )
 
-BIODIVERSITY_TARGET_DN = 1
-BIODIVERSITY_GEOD_ELLPS = "WGS84"
+TARGET_DN = 1
+GEOD_ELLPS = "WGS84"
 
 # Key species presence (Nature module 2.5). GBIF occurrence points are intersected with the AOI,
 # then summarised by species using record count, individual count, latest event date, and the most
