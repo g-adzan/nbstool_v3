@@ -321,6 +321,112 @@ ECOSYSTEM_CLASSES = {
 DISTURBANCE_RULE = "greater_than_zero"
 GEOD_ELLPS = "WGS84"
 
+# =============================================================================
+# Dryland Forest Disturbance
+# =============================================================================
+
+AOI = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
+
+DATA = Path(
+    r"C:\WRI\SCeNe_Coalition_2026\Database"
+)
+
+ECOSYSTEM_RASTER = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/ecosystem_v3.tif
+)
+HISTORICAL_RASTER = DATA / "historical_deforestation_v3.tif"
+FOREST_2024_RASTER = DATA / "forest_2024_v3.tif"
+DISTURBANCE_RASTER = DATA / "forest_disturbance_v3.tif"
+FOREST_GAIN_RASTER = DATA / "forest_gain_v3.tif"
+FOREST_DRIVERS_RASTER = DATA / "forest_drivers_v3.tif"
+
+NATURAL_DRIVERS = {
+    "Flooding": DATA / "flood_risk_v3.tif",
+    "Forest fire": DATA / "fire_risk_v3.tif",
+    "Drought": DATA / "drought_risk_v3.tif",
+    "Typhoon": DATA / "typhoon_risk_v3.tif",
+    "Landslide": DATA / "landslide_risk_v3.tif",
+}
+
+# Classes
+
+DRYLAND = 1
+REMAINING_FOREST = 1
+FOREST_LOSS = 2
+CURRENT_FOREST = 1
+FOREST_GAIN_VALUE = 1
+HIGH_RISK = 4
+
+
+FOREST_DRIVER_CLASSES = {
+    1: "Small-scale agriculture",
+    2: "Small-scale agriculture (fire)",
+    3: "Large-scale agriculture",
+    4: "Large-scale agriculture (fire)",
+    5: "Road development",
+    6: "Selective logging",
+    7: "Mining",
+    8: "Non-productive conversion",
+}
+
+
+# =============================================================================
+# Mangrove Forest Disturbance
+# =============================================================================
+
+DATA_DIR = Path(
+    r"C:\WRI\SCeNe_Coalition_2026\Database"
+)
+
+ECOSYSTEM_RASTER = DATA_DIR / "ecosystem_v3.tif"
+
+HISTORICAL_RASTER = (
+    DATA_DIR / "historical_deforestation_v3.tif"
+)
+
+FOREST_2024_RASTER = (
+    DATA_DIR / "forest_2024_v3.tif"
+)
+
+DISTURBANCE_RASTER = (
+    DATA_DIR / "forest_disturbance_v3.tif"
+)
+
+FOREST_DRIVERS_RASTER = (
+    DATA_DIR / "forest_drivers_v3.tif"
+)
+
+STORM_SURGE_RASTER = (
+    DATA_DIR / "storm_surge_v3.tif"
+)
+
+
+# =============================================================================
+# Pixel classes
+# =============================================================================
+
+# ecosystem_v3.tif
+MANGROVE_CLASS = 2
+
+# historical_deforestation_v3.tif
+REMAINING_FOREST_CLASS = 1
+
+# forest_2024_v3.tif
+CURRENT_FOREST_CLASS = 1
+
+# forest_disturbance_v3.tif
+# Any value > 0 is treated as disturbed.
+DISTURBANCE_THRESHOLD = 0
+
+# forest_drivers_v3.tif
+COMMODITY_CLASSES = [1, 2, 3, 4]
+SETTLEMENT_CLASS = 5
+
+# storm_surge_v3.tif
+STORM_SURGE_CLASSES = [4, 5]
+
+
+GEOD = Geod(ellps="WGS84")
 
 # ---------------------------------------------------------------------------------------
 # Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
