@@ -295,6 +295,34 @@ WRB_DISPLAY_TOP_N = 5           # 3.6 how many rows the frontend shows before "s
 WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not sum to ~100
 
 # ---------------------------------------------------------------------------------------
+# Threat assignment (F02-P3) - locked 2026-07-24
+# ---------------------------------------------------------------------------------------
+# Forest degradation screening (Threat module). Structural decline is assessed from canopy-height
+# deficit relative to an undisturbed reference population >=120 m from disturbed forest. Thresholds
+# represent relative/absolute height loss and severe degradation signals; results are intended for
+# area-level reporting rather than per-pixel interpretation at 30 m resolution.
+USER_AOI = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
+
+ECOSYSTEM_RASTER = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/ecosystem_v3.tif
+)
+
+DISTURBANCE_RASTER = (
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/forest_disturbance_v3.tif
+)
+
+ECOSYSTEM_CLASSES = {
+    1: "Dryland forest",
+    2: "Mangrove",
+    3: "Peatland",
+    4: "Other",
+}
+
+DISTURBANCE_RULE = "greater_than_zero"
+GEOD_ELLPS = "WGS84"
+
+
+# ---------------------------------------------------------------------------------------
 # Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
 # ---------------------------------------------------------------------------------------
 # One raster, three bands, produced by nbs_trajectory_pathway_v3.js. This is the v3 band layout
