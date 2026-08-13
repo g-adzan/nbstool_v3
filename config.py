@@ -383,7 +383,7 @@ NATURAL_DRIVERS = {
 
 
 # =============================================================================
-# Mangrove Forest Disturbance
+# Mangrove Disturbance
 # =============================================================================
 
 USER_AOI = Path(
@@ -400,6 +400,42 @@ FOREST_2024 = DATA_DIR / "forest_2024_v3.tif" #assets-geo/v3/threat/forest_2024_
 DISTURBANCE = DATA_DIR / "forest_disturbance_v3.tif" #assets-geo/v3/threat/forest_disturbance_v3.tif
 DRIVERS = DATA_DIR / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
 STORM_RISK = DATA_DIR / "risk_storm_v3.tif" #assets-geo/v3/threat/risk_storm_v3.tif
+
+# =============================================================================
+# Peatland Disturbance
+# =============================================================================
+
+USER_AOI = Path(
+    r"Z:\NbS_Tools\Dummy\AOI6_4326.shp"
+)
+
+DATA = Path(
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
+)
+
+PEAT_CANALS_DENSITY = DATA / "peat_canals_density_v3.tif"
+FIRE_RISK = DATA / "risk_fire_v3.tif"
+
+DRAINAGE_CANALS = DATA / "peat_canal.tif"
+
+
+# =============================================================================
+# PIXEL CLASSES
+# =============================================================================
+
+# ecosystem_v3.tif
+PEATLAND = 3
+
+# historical_deforestation_v3.tif
+REMAINING_FOREST = 1
+FOREST_LOSS = 2
+
+# forest_2024_v3.tif
+CURRENT_FOREST = 1
+
+# forest_disturbance_v3.tif
+# Any value > 0 = disturbed
+DISTURBANCE_THRESHOLD = 0
 
 
 # =============================================================================
