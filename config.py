@@ -401,46 +401,7 @@ DISTURBANCE = DATA_DIR / "forest_disturbance_v3.tif" #assets-geo/v3/threat/fores
 DRIVERS = DATA_DIR / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
 STORM_RISK = DATA_DIR / "risk_storm_v3.tif" #assets-geo/v3/threat/risk_storm_v3.tif
 
-# =============================================================================
-# Peatland Disturbance
-# =============================================================================
-
-USER_AOI = Path(
-    r"Z:\NbS_Tools\Dummy\AOI6_4326.shp"
-)
-
-DATA = Path(
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
-)
-
-PEAT_CANALS_DENSITY = DATA / "peat_canals_density_v3.tif"
-FIRE_RISK = DATA / "risk_fire_v3.tif"
-
-DRAINAGE_CANALS = DATA / "peat_canal.tif"
-
-
-# =============================================================================
-# PIXEL CLASSES
-# =============================================================================
-
-# ecosystem_v3.tif
-PEATLAND = 3
-
-# historical_deforestation_v3.tif
-REMAINING_FOREST = 1
-FOREST_LOSS = 2
-
-# forest_2024_v3.tif
-CURRENT_FOREST = 1
-
-# forest_disturbance_v3.tif
-# Any value > 0 = disturbed
-DISTURBANCE_THRESHOLD = 0
-
-
-# =============================================================================
-# PIXEL CLASSES
-# =============================================================================
+# PIXEL CLASSES ===========================================================
 
 # ecosystem_v3.tif
 MANGROVE_CLASS = 2
@@ -461,6 +422,40 @@ SETTLEMENT_CLASS = 5
 
 # risk_storm_v3.tif
 STORM_RISK_CLASSES = [4, 5]
+
+# =============================================================================
+# Peatland Disturbance
+# =============================================================================
+
+USER_AOI = Path(
+    r"Z:\NbS_Tools\Dummy\AOI6_4326.shp"
+)
+
+DATA = Path(
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
+)
+
+PEAT_CANALS_DENSITY = DATA / "peat_canals_density_v3.tif"
+FIRE_RISK = DATA / "risk_fire_v3.tif"
+
+DRAINAGE_CANALS = DATA / "peat_canal.tif"
+
+
+
+# PIXEL CLASSES ============================================================
+# ecosystem_v3.tif
+PEATLAND = 3
+
+# historical_deforestation_v3.tif
+REMAINING_FOREST = 1
+FOREST_LOSS = 2
+
+# forest_2024_v3.tif
+CURRENT_FOREST = 1
+
+# forest_disturbance_v3.tif
+# Any value > 0 = disturbed
+DISTURBANCE_THRESHOLD = 0
 
 # ---------------------------------------------------------------------------------------
 # Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
