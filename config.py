@@ -386,35 +386,24 @@ NATURAL_DRIVERS = {
 # Mangrove Forest Disturbance
 # =============================================================================
 
+USER_AOI = Path(
+    r"Z:\NbS_Tools\Dummy\AOI5_4326.shp"
+)
+
 DATA_DIR = Path(
-    r"C:\WRI\SCeNe_Coalition_2026\Database"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
 )
 
 ECOSYSTEM_RASTER = DATA_DIR / "ecosystem_v3.tif"
-
-HISTORICAL_RASTER = (
-    DATA_DIR / "historical_deforestation_v3.tif"
-)
-
-FOREST_2024_RASTER = (
-    DATA_DIR / "forest_2024_v3.tif"
-)
-
-DISTURBANCE_RASTER = (
-    DATA_DIR / "forest_disturbance_v3.tif"
-)
-
-FOREST_DRIVERS_RASTER = (
-    DATA_DIR / "forest_drivers_v3.tif"
-)
-
-STORM_SURGE_RASTER = (
-    DATA_DIR / "storm_surge_v3.tif"
-)
+HISTORICAL_RASTER = DATA_DIR / "historical_deforestation_v3.tif"
+FOREST_2024_RASTER = DATA_DIR / "forest_2024_v3.tif"
+DISTURBANCE_RASTER = DATA_DIR / "forest_disturbance_v3.tif"
+DRIVERS_RASTER = DATA_DIR / "drivers_disturbance_v3.tif"
+STORM_RISK_RASTER = DATA_DIR / "risk_storm_v3.tif"
 
 
 # =============================================================================
-# Pixel classes
+# PIXEL CLASSES
 # =============================================================================
 
 # ecosystem_v3.tif
@@ -427,18 +416,15 @@ REMAINING_FOREST_CLASS = 1
 CURRENT_FOREST_CLASS = 1
 
 # forest_disturbance_v3.tif
-# Any value > 0 is treated as disturbed.
+# Any value > 0 = disturbed
 DISTURBANCE_THRESHOLD = 0
 
-# forest_drivers_v3.tif
+# drivers_disturbance_v3.tif
 COMMODITY_CLASSES = [1, 2, 3, 4]
 SETTLEMENT_CLASS = 5
 
-# storm_surge_v3.tif
-STORM_SURGE_CLASSES = [4, 5]
-
-
-GEOD = Geod(ellps="WGS84")
+# risk_storm_v3.tif
+STORM_RISK_CLASSES = [4, 5]
 
 # ---------------------------------------------------------------------------------------
 # Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
