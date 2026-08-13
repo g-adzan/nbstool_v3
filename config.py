@@ -303,11 +303,11 @@ WRB_SUM_TOLERANCE_PCT = 2.0     # 3.6 flag when the group probabilities do not s
 # area-level reporting rather than per-pixel interpretation at 30 m resolution.
 USER_AOI = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
 
-ECOSYSTEM_RASTER = (
+ECOSYSTEM = (
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/ecosystem_v3.tif
 )
 
-DISTURBANCE_RASTER = (
+DISTURBANCE = (
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/forest_disturbance_v3.tif
 )
 
@@ -329,18 +329,18 @@ DATA = Path(
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
 )
 
-ECOSYSTEM = DATA / "ecosystem_v3.tif"
-HISTORICAL = DATA / "historical_deforestation_v3.tif"
-FOREST_2024 = DATA / "forest_2024_v3.tif"
-DISTURBANCE = DATA / "forest_disturbance_v3.tif"
-FOREST_GAIN = DATA / "forest_gain_v3.tif"
-FOREST_DRIVERS = DATA / "drivers_disturbance_v3.tif"
+ECOSYSTEM = DATA / "ecosystem_v3.tif" #assets-geo/v3/threat/ecosystem_v3.tif
+HISTORICAL = DATA / "historical_deforestation_v3.tif" #assets-geo/v3/threat/historical_deforestation_v3.tif
+FOREST_2024 = DATA / "forest_2024_v3.tif" #assets-geo/v3/threat/forest_2024_v3.tif
+DISTURBANCE = DATA / "forest_disturbance_v3.tif" #assets-geo/v3/threat/forest_disturbance_v3.tif
+FOREST_GAIN = DATA / "forest_gain_v3.tif" #assets-geo/v3/threat/forest_gain_v3.tif
+FOREST_DRIVERS = DATA / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
 
 # Additional driver/risk rasters
-DRIVERS_DISTURBANCE = DATA / "drivers_disturbance_v3.tif"
-FLOOD_RISK = DATA / "risk_flood_v3.tif"
-LANDSLIDE_RISK = DATA / "risk_landslide_v3.tif"
-STORM_RISK = DATA / "risk_storm_v3.tif"
+DRIVERS_DISTURBANCE = DATA / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
+FLOOD_RISK = DATA / "risk_flood_v3.tif" #assets-geo/v3/threat/risk_flood_v3.tif
+LANDSLIDE_RISK = DATA / "risk_landslide_v3.tif" #assets-geo/v3/threat/risk_landslide_v3.tif
+STORM_RISK = DATA / "risk_storm_v3.tif" #assets-geo/v3/threat/risk_storm_v3.tif
 
 DRYLAND = 1
 
@@ -394,12 +394,12 @@ DATA_DIR = Path(
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
 )
 
-ECOSYSTEM_RASTER = DATA_DIR / "ecosystem_v3.tif"
-HISTORICAL_RASTER = DATA_DIR / "historical_deforestation_v3.tif"
-FOREST_2024_RASTER = DATA_DIR / "forest_2024_v3.tif"
-DISTURBANCE_RASTER = DATA_DIR / "forest_disturbance_v3.tif"
-DRIVERS_RASTER = DATA_DIR / "drivers_disturbance_v3.tif"
-STORM_RISK_RASTER = DATA_DIR / "risk_storm_v3.tif"
+ECOSYSTEM = DATA_DIR / "ecosystem_v3.tif" #assets-geo/v3/threat/ecosystem_v3.tif
+HISTORICAL = DATA_DIR / "historical_deforestation_v3.tif" #assets-geo/v3/threat/historical_deforestation_v3.tif
+FOREST_2024 = DATA_DIR / "forest_2024_v3.tif" #assets-geo/v3/threat/forest_2024_v3.tif
+DISTURBANCE = DATA_DIR / "forest_disturbance_v3.tif" #assets-geo/v3/threat/forest_disturbance_v3.tif
+DRIVERS = DATA_DIR / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
+STORM_RISK = DATA_DIR / "risk_storm_v3.tif" #assets-geo/v3/threat/risk_storm_v3.tif
 
 
 # =============================================================================
