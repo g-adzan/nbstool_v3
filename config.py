@@ -324,39 +324,31 @@ GEOD_ELLPS = "WGS84"
 # =============================================================================
 # Dryland Forest Disturbance
 # =============================================================================
-
-AOI = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
-
+# Threat datasets
 DATA = Path(
-    r"C:\WRI\SCeNe_Coalition_2026\Database"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
 )
 
-ECOSYSTEM_RASTER = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\FOREST DEGRADATION" #assets-geo/v3/ecosystem_v3.tif
-)
-HISTORICAL_RASTER = DATA / "historical_deforestation_v3.tif"
-FOREST_2024_RASTER = DATA / "forest_2024_v3.tif"
-DISTURBANCE_RASTER = DATA / "forest_disturbance_v3.tif"
-FOREST_GAIN_RASTER = DATA / "forest_gain_v3.tif"
-FOREST_DRIVERS_RASTER = DATA / "forest_drivers_v3.tif"
+ECOSYSTEM = DATA / "ecosystem_v3.tif"
+HISTORICAL = DATA / "historical_deforestation_v3.tif"
+FOREST_2024 = DATA / "forest_2024_v3.tif"
+DISTURBANCE = DATA / "forest_disturbance_v3.tif"
+FOREST_GAIN = DATA / "forest_gain_v3.tif"
+FOREST_DRIVERS = DATA / "drivers_disturbance_v3.tif"
 
-NATURAL_DRIVERS = {
-    "Flooding": DATA / "flood_risk_v3.tif",
-    "Forest fire": DATA / "fire_risk_v3.tif",
-    "Drought": DATA / "drought_risk_v3.tif",
-    "Typhoon": DATA / "typhoon_risk_v3.tif",
-    "Landslide": DATA / "landslide_risk_v3.tif",
-}
-
-# Classes
+# Additional driver/risk rasters
+DRIVERS_DISTURBANCE = DATA / "drivers_disturbance_v3.tif"
+FLOOD_RISK = DATA / "risk_flood_v3.tif"
+LANDSLIDE_RISK = DATA / "risk_landslide_v3.tif"
+STORM_RISK = DATA / "risk_storm_v3.tif"
 
 DRYLAND = 1
+
 REMAINING_FOREST = 1
 FOREST_LOSS = 2
+
 CURRENT_FOREST = 1
 FOREST_GAIN_VALUE = 1
-HIGH_RISK = 4
-
 
 FOREST_DRIVER_CLASSES = {
     1: "Small-scale agriculture",
@@ -367,6 +359,26 @@ FOREST_DRIVER_CLASSES = {
     6: "Selective logging",
     7: "Mining",
     8: "Non-productive conversion",
+}
+
+# Disaster risk. The values are the raster values that indicate a risk e.g., 4 and 5 except forest_fire
+NATURAL_DRIVERS = {
+    "Flooding": {
+        "raster": FLOOD_RISK,
+        "values": [4]
+    },
+    "Forest fire": {
+        "raster": DRIVERS_DISTURBANCE,
+        "values": [10]
+    },
+    "Landslide": {
+        "raster": LANDSLIDE_RISK,
+        "values": [4]
+    },
+    "Extreme climate event": {
+        "raster": STORM_RISK,
+        "values": [4]
+    }
 }
 
 
