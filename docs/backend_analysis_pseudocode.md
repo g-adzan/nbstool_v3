@@ -21,8 +21,8 @@ The tool follows the F02 phased structure. This document is written module by mo
 | Site Characterization: General Context | F02-P2 | done (1.1 to 1.7) |
 | Site Characterization: Nature | F02-P2 | done (2.1 FLII, 2.2 KBA) |
 | Site Characterization: People | F02-P2 | done (Gridded WorldPop) |
-| Site Characterization: Climate | F02-P2 | upcoming |
-| Threat Profiles | F02-P3 | upcoming |
+| Site Characterization: Climate | F02-P2 | done |
+| Threat Profiles | F02-P3 | done 3.1 to 3.3 |
 | Pathway Recommendation | F02-P4 | upcoming |
 | Benefit Quantification | F02-P5 | upcoming |
 
