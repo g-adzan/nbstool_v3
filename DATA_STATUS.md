@@ -36,13 +36,14 @@ and the numeric 5.x produce none).
 | 3.4 Annual Precipitation | ⚠️ | 12-band raster wired; verify unit + source/period label |
 | 3.5 Fire Susceptibility | ⚠️ | fire wired (hazard_fire.tif); verify 1–5 encoding |
 | 3.6 Soil Classification | ⛔ | **parked** — awaiting team confirm of code→name lookup; + stub |
+| 3.7 Historical Burned Area | ⚠️ | GABAM 2014-2024 wired (`GABAM_RASTER_TEMPLATE`, MOSAIC_2); union headline + per-year bar chart; 11 clips per run |
 | 4.1 Pathway Distribution | ⚠️ | verify prob/pathway values; runs |
 | 4.2 Activity List | ✅ | — |
 | 5.1 General Benefit | ✅* | needs the F02-P4 stage JSON first |
 | 5.2 Avoided Unplanned Deforestation | ✅* | needs F02-P4 + F02-P2 General (1.5) stage JSON + `PROJECT_DURATION_YEARS` |
 | 5.3 ARR Carbon Removal (ex-ante) | ⚠️ | runs directly from rasters (pathway + AGB + elevation + precip), no stage file; baseline uses PLACEHOLDER class values (C4/C5/C6), and precip/elev units to verify |
 
-Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3**, plus
+Runnable now: **1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5, 3.7, 4.1, 4.2, 5.3**, plus
 **5.1, 5.2** after their upstream stages are run (see F02-P5 run order below). ⚠️ rows run but
 need a one-time check.
 
@@ -94,6 +95,7 @@ need a one-time check.
 | `RISK_RASTERS` (5) | `D:\NBSTOOLV3\risk_*.tif` (cyclone, drought, fire, flood, landslide) | 1.7 |
 | `HAZARD_RASTERS` (5) | `D:\NBSTOOLV3\disaster_risks\hazard_*.tif` | 3.5 (fire); ex-1.7, kept until 3.5 rebuild |
 | `SOIL_CLASS_RASTER` | `D:\NBSTOOLV3\soil_groups.tif` | 3.6 (needs lookup) |
+| `GABAM_RASTER_TEMPLATE` | `D:\NBSTOOLV3\MOSAIC_2\GABAM_<year>.tif` (2014-2024) | 3.7 |
 
 ---
 

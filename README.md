@@ -42,7 +42,7 @@ the module, so a running kernel keeps the old values.
 | ---------------------- | ------ | ---------- |
 | `F02-P2 General.ipynb` | F02-P2 | 1.1 Ecosystem, 1.2 Admin, 1.3 WDPA, 1.4 Terrain, 1.5 Deforestation, 1.6 Risk, 1.7 Hazard, 1.8 Land Cover |
 | `F02-P2 Nature.ipynb`  | F02-P2 | 2.1 FLII, 2.2 KBA |
-| `F02-P2 Climate.ipynb` | F02-P2 | 3.1 Carbon, 3.2 Soil carbon, 3.3 Temperature, 3.4 Precipitation, 3.5 Fire, 3.6 Soil class |
+| `F02-P2 Climate.ipynb` | F02-P2 | 3.1 Carbon, 3.2 Soil carbon, 3.3 Temperature, 3.4 Precipitation, 3.5 Fire, 3.6 Soil class, 3.7 Historical burned area |
 | `F02-P3 Threats.ipynb` | F02-P3 | upcoming |
 | `F02-P4 Pathway.ipynb` | F02-P4 | 4.1 Pathway distribution, 4.2 Activity list |
 | `F02-P5 Benefit.ipynb` | F02-P5 | 5.1 General benefit, 5.2 Avoided unplanned deforestation, 5.3 ARR carbon removal |
@@ -137,7 +137,7 @@ Paths still marked `<SET ...>` are not available yet; see `DATA_STATUS.md`.
   handoff (`save_results` / `load_results`)
 - `F02-P2 General.ipynb` - components 1.1 to 1.8
 - `F02-P2 Nature.ipynb` - components 2.1 and 2.2
-- `F02-P2 Climate.ipynb` - components 3.1 to 3.6
+- `F02-P2 Climate.ipynb` - components 3.1 to 3.7
 - `F02-P4 Pathway.ipynb` - components 4.1 and 4.2
 - `F02-P5 Benefit.ipynb` - components 5.1, 5.2, 5.3
 - `wrb_descriptions.py` - WRB 2006 soil group glosses, soil properties only
