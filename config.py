@@ -118,6 +118,15 @@ RISK_RASTERS = {
 RISK_LEVELS = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High"}
 RISK_PRESENCE_PCT = 20   # 1.7 representative level = highest class covering >= this % of AOI area
 
+# Historical burned area, GABAM annual burned maps (Climate 3.7). One binary raster per year in
+# D:\NBSTOOLV3\MOSAIC_2, named GABAM_<year>.tif, value 1 = burned and 0 = nodata, ~30 m, EPSG:4326.
+# A pixel can burn in more than one year, so 3.7 reports the union (area burned at least once) as
+# the headline and the per-year areas as a bar chart. GABAM_RASTER_TEMPLATE keeps a literal
+# {year} placeholder, filled per year with .format(year=...).
+GABAM_DIR = r"D:\NBSTOOLV3\MOSAIC_2"
+GABAM_YEARS = list(range(2014, 2025))          # 2014..2024 inclusive, the years present in MOSAIC_2
+GABAM_RASTER_TEMPLATE = GABAM_DIR + r"\GABAM_{year}.tif"
+
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
 FLII_CLASS_RASTER  = r"D:\NBSTOOLV3\flii_class_mosaic_SEA_300m.tif"   # 1=Low, 2=Medium, 3=High
