@@ -8,6 +8,9 @@ marked <SET ...> to your own file before running. This file also serves as the i
 
 # ============================ REFERENCE CRS ============================
 # The AOI is accepted in any CRS and reprojected to this equal-area CRS for all area work.
+from pathlib import Path
+
+
 REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
 # ============================ AOI (change it HERE, one place) ============================
@@ -754,3 +757,29 @@ STAGE_CLIMATE = "F02-P2-climate"
 STAGE_THREATS = "F02-P3-threats"
 STAGE_PATHWAY = "F02-P4-pathway"
 STAGE_BENEFIT = "F02-P5-benefit"
+
+# ---------------------------------------------------------------------------------------
+# Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
+# ---------------------------------------------------------------------------------------
+
+PROJECT_DURATION = 30
+RATE_PCT = 1.5              # dummy annual deforestation rate
+ECOSYSTEM_CLASS = 1         # 1 Forest, 2 Mangrove, 3 Peatland
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")
+
+ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
+DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"
+HABITAT_ROOT = DATA / "BIODIVERSITY/habitat_area"
+
+HABITAT_FOLDERS = [
+    HABITAT_ROOT / x
+    for x in ["Mammal", "Bird", "Reptile", "Amphibian"]
+]
+
+ECOSYSTEM_NAMES = {
+    1: "forest",
+    2: "mangrove",
+    3: "peatland"
+}
+
