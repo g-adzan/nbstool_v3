@@ -762,15 +762,15 @@ STAGE_BENEFIT = "F02-P5-benefit"
 # Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
 # ---------------------------------------------------------------------------------------
 
-PROJECT_DURATION = 30
-RATE_PCT = 1.5              # dummy annual deforestation rate
+PROJECT_DURATION = 30       # <SET: project duration in years>
+RATE_PCT = 1.5              # <SET: annual deforestation rate in %>
 ECOSYSTEM_CLASS = 1         # 1 Forest, 2 Mangrove, 3 Peatland
 
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
 
 ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
-DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"
-HABITAT_ROOT = DATA / "BIODIVERSITY/habitat_area"
+DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"     #def_risk_v3.tif
+HABITAT_ROOT = DATA / "BIODIVERSITY/habitat_area"               #assets-geo/v3/habitat_area
 
 HABITAT_FOLDERS = [
     HABITAT_ROOT / x
@@ -781,5 +781,35 @@ ECOSYSTEM_NAMES = {
     1: "forest",
     2: "mangrove",
     3: "peatland"
+}
+
+# ---------------------------------------------------------------------------------------
+# Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
+# ---------------------------------------------------------------------------------------
+PROJECT_DURATION = 30             # <SET: project duration in years>
+RATE_PCT = 1.5                    # <SET: annual deforestation rate in %>
+ECOSYSTEM_CLASS = 1               # 1 Forest, 2 Mangrove, 3 Peatland
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
+
+ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
+DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"
+
+BIODIVERSITY = DATA / "BIODIVERSITY"                                    
+HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
+INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
+
+# Change only these if your GeoParquet uses different column names
+SPECIES_COL = "species"
+STATUS_COL = "redlistCategory"
+RASTER_COL = "raster_path"
+
+IUCN_MAP = {
+    "CRITICALLY ENDANGERED": "CR",
+    "ENDANGERED": "EN",
+    "VULNERABLE": "VU",
+    "CR": "CR",
+    "EN": "EN",
+    "VU": "VU",
 }
 
