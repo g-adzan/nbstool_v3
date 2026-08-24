@@ -559,6 +559,13 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # To update, re-export the tab over this file.
 ACTIVITY_TABLE = r"D:\NBSTOOLV3\canonical_v3_activities.csv"
 
+# Apply carbon risk assumption
+# User inputs the leakage, uncertainty, and buffer values in the GUI. The tool applies them to the
+# carbon quantification results. The default values are set here, and can be overridden by the
+DEFAULT_LEAKAGE = 15.0
+DEFAULT_UNCERTAINTY = 10.0
+DEFAULT_BUFFER = 12.0
+
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
 # ---------------------------------------------------------------------------------------
