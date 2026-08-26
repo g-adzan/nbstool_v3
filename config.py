@@ -845,3 +845,22 @@ RASTER_COL = "raster_path"
 RESTORE_CODE = 3
 GAIN_CODE = 4
 DEGRADATION_CODE = 2
+
+# ---------------------------------------------------------------------------------------
+# 5.12 Enhance resilience to climate hazards
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")    #<SET: user input area>
+
+PROJECT_DURATION = 30               #<SET: project duration in years>
+POP_BASE_YEAR = 2025                #<SET: baseline year based on project duration>
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")   #assets-geo/v3/habitat_area
+
+FUTURE_POP = DATA / "PEOPLE/futurepop_2025_2100.tif"    #assets-geo/v3/FuturePop_v3.tif
+
+HAZARDS = {
+    "Flood": DATA / "Testing_folder/Threat/risk_flood_v3.tif",              #assets-geo/v3/threat/risk_flood_v3.tif
+    "Fire": DATA / "Testing_folder/Threat/risk_fire_v3.tif",                #assets-geo/v3/threat/risk_fire_v3.tif
+    "Landslide": DATA / "Testing_folder/Threat/risk_landslide_v3.tif",      #assets-geo/v3/threat/risk_landslide_v3.tif
+    "Typhoon": DATA / "Testing_folder/Threat/risk_storm_v3.tif",            #assets-geo/v3/threat/risk_storm_v3.tif
+}
