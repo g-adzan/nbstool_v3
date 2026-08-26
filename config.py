@@ -766,7 +766,7 @@ STAGE_PATHWAY = "F02-P4-pathway"
 STAGE_BENEFIT = "F02-P5-benefit"
 
 # ---------------------------------------------------------------------------------------
-# Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
+# 5.9 Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
 # ---------------------------------------------------------------------------------------
 
 PROJECT_DURATION = 30       # <SET: project duration in years>
@@ -791,7 +791,7 @@ ECOSYSTEM_NAMES = {
 }
 
 # ---------------------------------------------------------------------------------------
-# Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
+# 5.10 Reduced vulnerability to fire, pests, and disease
 # ---------------------------------------------------------------------------------------
 PROJECT_DURATION = 30             # <SET: project duration in years>
 RATE_PCT = 1.5                    # <SET: annual deforestation rate in %>
@@ -820,3 +820,20 @@ IUCN_MAP = {
     "VU": "VU",
 }
 
+# ---------------------------------------------------------------------------------------
+# 5.11 Improved forest productivity and regeneration (Potential biodiversity uplifting (ex-ante))
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
+
+PROJECT_DURATION_YEARS = 30
+FOREST_CHANGE_PERIOD_YEARS = 10
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")                       #assets-geo/v3
+
+# Adjust paths if needed
+PATHWAY_RASTER = DATA / "PATHWAY_NBS/SEA_NBS_PATHWAY.tif"                   #assets-geo/v3/sea_nbs_pathway_v3.tif
+FOREST_CHANGE_RASTER = DATA / "Testing_folder/Threat/forest_change_v3.tif"  #assets-geo/v3/threat/forest_change_v3.tif
+
+RESTORE_CODE = 3
+GAIN_CODE = 4
+DEGRADATION_CODE = 2
