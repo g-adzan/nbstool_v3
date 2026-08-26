@@ -825,14 +825,22 @@ IUCN_MAP = {
 # ---------------------------------------------------------------------------------------
 USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
 
-PROJECT_DURATION_YEARS = 30
-FOREST_CHANGE_PERIOD_YEARS = 10
+PROJECT_DURATION = 30       # <SET: project duration in years>
+FOREST_CHANGE_YEARS = 10    # Defalut value is 10 years based on historical forest change data (2014-2024)
 
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")                       #assets-geo/v3
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")                #assets-geo/v3
 
-# Adjust paths if needed
-PATHWAY_RASTER = DATA / "PATHWAY_NBS/SEA_NBS_PATHWAY.tif"                   #assets-geo/v3/sea_nbs_pathway_v3.tif
-FOREST_CHANGE_RASTER = DATA / "Testing_folder/Threat/forest_change_v3.tif"  #assets-geo/v3/threat/forest_change_v3.tif
+PATHWAY = DATA / "PATHWAY_NBS/SEA_NBS_PATHWAY.tif"                   #assets-geo/v3/pathway/sea_nbs_pathway_v3.tif
+FOREST_CHANGE = DATA / "Testing_folder/Threat/forest_change_v3.tif"  #assets-geo/v3/threat/forest_change_v3.tif
+
+BIODIVERSITY = DATA / "BIODIVERSITY"
+HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
+INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
+
+# GeoParquet columns
+SPECIES_COL = "species"
+STATUS_COL = "redlistCategory"
+RASTER_COL = "raster_path"
 
 RESTORE_CODE = 3
 GAIN_CODE = 4
