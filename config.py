@@ -766,6 +766,18 @@ STAGE_PATHWAY = "F02-P4-pathway"
 STAGE_BENEFIT = "F02-P5-benefit"
 
 # ---------------------------------------------------------------------------------------
+# 5.7 Protection of watershed function
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
+PATHWAY = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PATHWAY_NBS\SEA_NBS_PATHWAY.tif")
+
+NAMES = {
+    1: "forest",
+    2: "mangrove",
+    3: "peatland",
+}
+
+# ---------------------------------------------------------------------------------------
 # 5.9 Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
 # ---------------------------------------------------------------------------------------
 
