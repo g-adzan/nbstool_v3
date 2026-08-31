@@ -6,11 +6,10 @@ thresholds locked in the design spec (docs/backend_analysis_pseudocode.md). Set 
 marked <SET ...> to your own file before running. This file also serves as the input checklist.
 """
 
+from pathlib import Path   # used by the Threats (Dryland Forest Disturbance) section below
+
 # ============================ REFERENCE CRS ============================
 # The AOI is accepted in any CRS and reprojected to this equal-area CRS for all area work.
-from pathlib import Path
-
-
 REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the team.
 
 # ============================ AOI (change it HERE, one place) ============================
@@ -18,7 +17,7 @@ REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the tea
 # import). Every notebook reads AOI_PATH and AOI_ID from here; do not hardcode them per notebook.
 # AOI_ID also names the per-AOI output subfolder and the stage-handoff filenames, so results for
 # different AOIs never mix.
-AOI_PATH = r"D:\NBSTOOLV3\AOI1.shp"
+AOI_PATH = r"D:\NBSTOOLV3\laos\lao_pdr.shp"
 AOI_ID   = "aoi1"
 
 # ============================ OUTPUTS (per AOI) ============================
@@ -52,7 +51,7 @@ ADMIN_LEVELS = {
 }
 
 # Protected areas, WDPA (1.3)
-WDPA_POLYGON = r"D:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
+WDPA_POLYGON = r"D:\NBSTOOLV3\AOI1.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
 # Terrain (1.4). One continuous elevation raster in metres. Slope is DERIVED from it by the tool
 # (slope_percent_from_dem), so no separate slope raster is needed. 1.4 bins both itself; the
@@ -494,6 +493,7 @@ PATHWAY_CODES = {
 }
 
 PROTECT_CODE = 1   # named because F02-P5 selects on it; the other codes are only tabulated
+MANAGE_CODE  = 2   # named because 5.7 selects Manage pixels on it
 RESTORE_CODE = 3   # named because 5.3 selects Restore pixels on it
 
 # Codes 1 to 3 are the actual NBS pathways. Code 4 is a screening outcome in the same band:
@@ -558,13 +558,6 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
 # To update, re-export the tab over this file.
 ACTIVITY_TABLE = r"D:\NBSTOOLV3\canonical_v3_activities.csv"
-
-# Apply carbon risk assumption
-# User inputs the leakage, uncertainty, and buffer values in the GUI. The tool applies them to the
-# carbon quantification results. The default values are set here, and can be overridden by the
-DEFAULT_LEAKAGE = 15.0
-DEFAULT_UNCERTAINTY = 10.0
-DEFAULT_BUFFER = 12.0
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
@@ -691,6 +684,40 @@ ARR_RESTORE_CAT_CSTATE = {                                     # Restore cat_cod
     17: "C6",  # Cat 10  Non-forest -> barren
 }
 
+# ---------------------------------------------------------------------------------------
+# Ecological connectivity (Benefit module 5.7)
+# ---------------------------------------------------------------------------------------
+# MSPA output from GuidosToolbox, categorical: one structural class per forest pixel, run on the
+# 2024 forest-cover mask. 2024 is used for the metrics; a 2014 counterpart is kept for a future
+# connectivity-change analysis, not read in v1. The raster is EPSG:4326; load_raster_clipped
+# reprojects it to REFERENCE_CRS for area.
+MSPA_2024_RASTER = r"D:\NBSTOOLV3\fc_2024_mspa_4326_v2.tif"
+MSPA_2014_RASTER = r"D:\NBSTOOLV3\fc_2014_mspa_4326_v2.tif"   # future change analysis, not used yet (verify path)
+
+# MSPA class codes, GuidosToolbox standard 8-bit output, Intext = 1. Confirmed by Gema
+# (2026-07-29) from the GuidosToolbox class table. Each class has an external and an internal
+# (+100) value; the "in Edge" / "in Perforation" variants of loop and bridge are still connectors
+# and map to loop / bridge. Both Intext modes are listed so the map is robust. Connector = bridge
+# + loop; 5.7 flags any foreground code it finds that is not listed here.
+MSPA_CLASS_CODES = {
+    17: "core", 117: "core",
+    9: "islet", 109: "islet",
+    5: "perforation", 105: "perforation",
+    3: "edge", 103: "edge",
+    65: "loop", 165: "loop", 67: "loop", 167: "loop", 69: "loop", 169: "loop",
+    33: "bridge", 133: "bridge", 35: "bridge", 135: "bridge", 37: "bridge", 137: "bridge",
+    1: "branch", 101: "branch",
+}
+# Non-habitat values: background, core-opening, border-opening, no-data. Not flagged as unmapped.
+MSPA_BACKGROUND_CODES = frozenset({0, 100, 129, 220})
+MSPA_CONNECTOR_CLASSES = ("bridge", "loop")             # links between habitat blocks
+MSPA_CORE_CLASSES = ("core",)                           # the intact interior block
+MSPA_EDGE_CLASSES = ("edge",)
+MSPA_HABITAT_CLASSES = ("core", "perforation", "edge", "branch", "loop", "bridge", "islet")
+
+# Word used for each reference ecosystem in the connectivity narrative (pathway band 3).
+CONNECTIVITY_ECO_WORDS = {1: "forest", 2: "mangrove", 3: "peatland", 4: "savanna"}
+
 # Carbon fraction, dry matter to carbon, ANX-B Section 4.6. Mangrove 0.451, others 0.47.
 ARR_CARBON_FRACTION = {1: 0.47, 2: 0.451, 3: 0.47}
 
@@ -764,115 +791,3 @@ STAGE_CLIMATE = "F02-P2-climate"
 STAGE_THREATS = "F02-P3-threats"
 STAGE_PATHWAY = "F02-P4-pathway"
 STAGE_BENEFIT = "F02-P5-benefit"
-
-# ---------------------------------------------------------------------------------------
-# 5.7 Protection of watershed function
-# ---------------------------------------------------------------------------------------
-USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
-PATHWAY = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PATHWAY_NBS\SEA_NBS_PATHWAY.tif")
-
-NAMES = {
-    1: "forest",
-    2: "mangrove",
-    3: "peatland",
-}
-
-# ---------------------------------------------------------------------------------------
-# 5.9 Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
-# ---------------------------------------------------------------------------------------
-
-PROJECT_DURATION = 30       # <SET: project duration in years>
-RATE_PCT = 1.5              # <SET: annual deforestation rate in %>
-ECOSYSTEM_CLASS = 1         # 1 Forest, 2 Mangrove, 3 Peatland
-
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
-
-ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
-DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"     #def_risk_v3.tif
-HABITAT_ROOT = DATA / "BIODIVERSITY/habitat_area"               #assets-geo/v3/habitat_area
-
-HABITAT_FOLDERS = [
-    HABITAT_ROOT / x
-    for x in ["Mammal", "Bird", "Reptile", "Amphibian"]
-]
-
-ECOSYSTEM_NAMES = {
-    1: "forest",
-    2: "mangrove",
-    3: "peatland"
-}
-
-# ---------------------------------------------------------------------------------------
-# 5.10 Reduced vulnerability to fire, pests, and disease
-# ---------------------------------------------------------------------------------------
-PROJECT_DURATION = 30             # <SET: project duration in years>
-RATE_PCT = 1.5                    # <SET: annual deforestation rate in %>
-ECOSYSTEM_CLASS = 1               # 1 Forest, 2 Mangrove, 3 Peatland
-
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
-
-ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
-DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"
-
-BIODIVERSITY = DATA / "BIODIVERSITY"                                    
-HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
-INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
-
-# Change only these if your GeoParquet uses different column names
-SPECIES_COL = "species"
-STATUS_COL = "redlistCategory"
-RASTER_COL = "raster_path"
-
-IUCN_MAP = {
-    "CRITICALLY ENDANGERED": "CR",
-    "ENDANGERED": "EN",
-    "VULNERABLE": "VU",
-    "CR": "CR",
-    "EN": "EN",
-    "VU": "VU",
-}
-
-# ---------------------------------------------------------------------------------------
-# 5.11 Improved forest productivity and regeneration (Potential biodiversity uplifting (ex-ante))
-# ---------------------------------------------------------------------------------------
-USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
-
-PROJECT_DURATION = 30       # <SET: project duration in years>
-FOREST_CHANGE_YEARS = 10    # Defalut value is 10 years based on historical forest change data (2014-2024)
-
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")                #assets-geo/v3
-
-PATHWAY = DATA / "PATHWAY_NBS/SEA_NBS_PATHWAY.tif"                   #assets-geo/v3/pathway/sea_nbs_pathway_v3.tif
-FOREST_CHANGE = DATA / "Testing_folder/Threat/forest_change_v3.tif"  #assets-geo/v3/threat/forest_change_v3.tif
-
-BIODIVERSITY = DATA / "BIODIVERSITY"
-HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
-INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
-
-# GeoParquet columns
-SPECIES_COL = "species"
-STATUS_COL = "redlistCategory"
-RASTER_COL = "raster_path"
-
-RESTORE_CODE = 3
-GAIN_CODE = 4
-DEGRADATION_CODE = 2
-
-# ---------------------------------------------------------------------------------------
-# 5.12 Enhance resilience to climate hazards
-# ---------------------------------------------------------------------------------------
-USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")    #<SET: user input area>
-
-PROJECT_DURATION = 30               #<SET: project duration in years>
-POP_BASE_YEAR = 2025                #<SET: baseline year based on project duration>
-
-DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")   #assets-geo/v3/habitat_area
-
-FUTURE_POP = DATA / "PEOPLE/futurepop_2025_2100.tif"    #assets-geo/v3/FuturePop_v3.tif
-
-HAZARDS = {
-    "Flood": DATA / "Testing_folder/Threat/risk_flood_v3.tif",              #assets-geo/v3/threat/risk_flood_v3.tif
-    "Fire": DATA / "Testing_folder/Threat/risk_fire_v3.tif",                #assets-geo/v3/threat/risk_fire_v3.tif
-    "Landslide": DATA / "Testing_folder/Threat/risk_landslide_v3.tif",      #assets-geo/v3/threat/risk_landslide_v3.tif
-    "Typhoon": DATA / "Testing_folder/Threat/risk_storm_v3.tif",            #assets-geo/v3/threat/risk_storm_v3.tif
-}
