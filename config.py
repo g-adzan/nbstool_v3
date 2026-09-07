@@ -323,10 +323,10 @@ DISTURBANCE = (
 )
 
 ECOSYSTEM_CLASSES = {
+    0: "Other",
     1: "Dryland forest",
     2: "Mangrove",
-    3: "Peatland",
-    4: "Other",
+    3: "Peatland"
 }
 
 DISTURBANCE_RULE = "greater_than_zero"
