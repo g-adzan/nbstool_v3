@@ -329,7 +329,6 @@ ECOSYSTEM_CLASSES = {
     3: "Peatland"
 }
 
-DISTURBANCE_RULE = "greater_than_zero"
 GEOD_ELLPS = "WGS84"
 
 # =============================================================================
