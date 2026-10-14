@@ -17,7 +17,7 @@ REFERENCE_CRS = "ESRI:54034"   # World Cylindrical Equal Area. Locked by the tea
 # import). Every notebook reads AOI_PATH and AOI_ID from here; do not hardcode them per notebook.
 # AOI_ID also names the per-AOI output subfolder and the stage-handoff filenames, so results for
 # different AOIs never mix.
-AOI_PATH = r"D:\NBSTOOLV3\laos\lao_pdr.shp"
+AOI_PATH = r"D:\NBSTOOLV3\AOI1.shp"
 AOI_ID   = "aoi1"
 
 # ============================ OUTPUTS (per AOI) ============================
@@ -51,7 +51,7 @@ ADMIN_LEVELS = {
 }
 
 # Protected areas, WDPA (1.3)
-WDPA_POLYGON = r"D:\NBSTOOLV3\AOI1.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
+WDPA_POLYGON = r"D:\NBSTOOLV3\WDPA_SEA.shp"   # verify fields: STATUS, MARINE, DESIG_ENG, IUCN_CAT, NAME
 
 # Terrain (1.4). One continuous elevation raster in metres. Slope is DERIVED from it by the tool
 # (slope_percent_from_dem), so no separate slope raster is needed. 1.4 bins both itself; the
@@ -329,6 +329,7 @@ ECOSYSTEM_CLASSES = {
     3: "Peatland"
 }
 
+DISTURBANCE_RULE = "greater_than_zero"
 GEOD_ELLPS = "WGS84"
 
 # =============================================================================
@@ -557,6 +558,13 @@ PATHWAY_CATCODE_TO_PATHWAY = {
 # with a blank Ecosystem and are skipped; 4.2 handles them via PATHWAY_CATCODE_TO_PATHWAY.
 # To update, re-export the tab over this file.
 ACTIVITY_TABLE = r"D:\NBSTOOLV3\canonical_v3_activities.csv"
+
+# Apply carbon risk assumption
+# User inputs the leakage, uncertainty, and buffer values in the GUI. The tool applies them to the
+# carbon quantification results. The default values are set here, and can be overridden by the
+DEFAULT_LEAKAGE = 15.0
+DEFAULT_UNCERTAINTY = 10.0
+DEFAULT_BUFFER = 12.0
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
@@ -790,3 +798,115 @@ STAGE_CLIMATE = "F02-P2-climate"
 STAGE_THREATS = "F02-P3-threats"
 STAGE_PATHWAY = "F02-P4-pathway"
 STAGE_BENEFIT = "F02-P5-benefit"
+
+# ---------------------------------------------------------------------------------------
+# 5.7 Protection of watershed function
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
+PATHWAY = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PATHWAY_NBS\SEA_NBS_PATHWAY.tif")
+
+NAMES = {
+    1: "forest",
+    2: "mangrove",
+    3: "peatland",
+}
+
+# ---------------------------------------------------------------------------------------
+# 5.9 Enhanced Biodiversity and Ecosystem Function (Benefit module 5.4)
+# ---------------------------------------------------------------------------------------
+
+PROJECT_DURATION = 30       # <SET: project duration in years>
+RATE_PCT = 1.5              # <SET: annual deforestation rate in %>
+ECOSYSTEM_CLASS = 1         # 1 Forest, 2 Mangrove, 3 Peatland
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
+
+ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
+DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"     #def_risk_v3.tif
+HABITAT_ROOT = DATA / "BIODIVERSITY/habitat_area"               #assets-geo/v3/habitat_area
+
+HABITAT_FOLDERS = [
+    HABITAT_ROOT / x
+    for x in ["Mammal", "Bird", "Reptile", "Amphibian"]
+]
+
+ECOSYSTEM_NAMES = {
+    1: "forest",
+    2: "mangrove",
+    3: "peatland"
+}
+
+# ---------------------------------------------------------------------------------------
+# 5.10 Reduced vulnerability to fire, pests, and disease
+# ---------------------------------------------------------------------------------------
+PROJECT_DURATION = 30             # <SET: project duration in years>
+RATE_PCT = 1.5                    # <SET: annual deforestation rate in %>
+ECOSYSTEM_CLASS = 1               # 1 Forest, 2 Mangrove, 3 Peatland
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3") #assets-geo/v3
+
+ECOSYSTEM = DATA / "Testing_folder/Threat/ecosystem_v3.tif"
+DEF_RISK = DATA / "DEFORESTATION_RISKS/prob_mosaic_SEA.tif"
+
+BIODIVERSITY = DATA / "BIODIVERSITY"                                    
+HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
+INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
+
+# Change only these if your GeoParquet uses different column names
+SPECIES_COL = "species"
+STATUS_COL = "redlistCategory"
+RASTER_COL = "raster_path"
+
+IUCN_MAP = {
+    "CRITICALLY ENDANGERED": "CR",
+    "ENDANGERED": "EN",
+    "VULNERABLE": "VU",
+    "CR": "CR",
+    "EN": "EN",
+    "VU": "VU",
+}
+
+# ---------------------------------------------------------------------------------------
+# 5.11 Improved forest productivity and regeneration (Potential biodiversity uplifting (ex-ante))
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")
+
+PROJECT_DURATION = 30       # <SET: project duration in years>
+FOREST_CHANGE_YEARS = 10    # Defalut value is 10 years based on historical forest change data (2014-2024)
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")                #assets-geo/v3
+
+PATHWAY = DATA / "PATHWAY_NBS/SEA_NBS_PATHWAY.tif"                   #assets-geo/v3/pathway/sea_nbs_pathway_v3.tif
+FOREST_CHANGE = DATA / "Testing_folder/Threat/forest_change_v3.tif"  #assets-geo/v3/threat/forest_change_v3.tif
+
+BIODIVERSITY = DATA / "BIODIVERSITY"
+HABITAT_ROOT = BIODIVERSITY / "habitat_area"                            #assets-geo/v3/habitat_area
+INVENTORY = BIODIVERSITY / "habitat_area/species_iucn_v3.geoparquet"    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
+
+# GeoParquet columns
+SPECIES_COL = "species"
+STATUS_COL = "redlistCategory"
+RASTER_COL = "raster_path"
+
+RESTORE_CODE = 3
+GAIN_CODE = 4
+DEGRADATION_CODE = 2
+
+# ---------------------------------------------------------------------------------------
+# 5.12 Enhance resilience to climate hazards
+# ---------------------------------------------------------------------------------------
+USER_AOI = Path(r"Z:\NbS_Tools\Dummy\AOI2_4326.shp")    #<SET: user input area>
+
+PROJECT_DURATION = 30               #<SET: project duration in years>
+POP_BASE_YEAR = 2025                #<SET: baseline year based on project duration>
+
+DATA = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3")   #assets-geo/v3/habitat_area
+
+FUTURE_POP = DATA / "PEOPLE/futurepop_2025_2100.tif"    #assets-geo/v3/FuturePop_v3.tif
+
+HAZARDS = {
+    "Flood": DATA / "Testing_folder/Threat/risk_flood_v3.tif",              #assets-geo/v3/threat/risk_flood_v3.tif
+    "Fire": DATA / "Testing_folder/Threat/risk_fire_v3.tif",                #assets-geo/v3/threat/risk_fire_v3.tif
+    "Landslide": DATA / "Testing_folder/Threat/risk_landslide_v3.tif",      #assets-geo/v3/threat/risk_landslide_v3.tif
+    "Typhoon": DATA / "Testing_folder/Threat/risk_storm_v3.tif",            #assets-geo/v3/threat/risk_storm_v3.tif
+}
