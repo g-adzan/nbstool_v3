@@ -333,8 +333,17 @@ DISTURBANCE_RULE = "greater_than_zero"
 GEOD_ELLPS = "WGS84"
 
 # =============================================================================
-# Dryland Forest Disturbance
+# Observed Ecosystem Disturbance (F02-P3) - locked 2026-11-09
 # =============================================================================
+
+
+
+# ---------- Land Degradation ----------
+aoi_path = Path(r"Z:\Testing\AOI\AOI2_54034.shp")
+forest_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_COVER\FC_2024_SEA_54034.tif")
+degradation_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_DEGRADATION\land_degradation_54034.tif")
+
+
 # Threat datasets
 DATA = Path(
     r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
