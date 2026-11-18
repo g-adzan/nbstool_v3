@@ -280,7 +280,7 @@ USER_POLYGON = Path(
 )
 
 PEAT_DEPTH_RASTER = Path(
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PEATLAND\sea_peat_depth_54034.tif"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PEATLAND\sea_peat_depth_54034.tif"          #assets-geo/v3/peat_depth_54034_v3.tif
 )
 
 
