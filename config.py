@@ -223,6 +223,8 @@ PEOPLE_AGE_GROUPS = {
     "65+": (15, 16, 17, 18, 19, 20),
 }
 
+# ============================ CLIMATE & CARBON ============================
+
 # Biomass (Climate module 3.1, Benefit module 5.2). Continuous raster, DRY BIOMASS DENSITY in
 # Mg/ha, not carbon. AGB is the in-house layer: GEDI AGBD calibrated with Alpha Earth (AEF). The
 # tool applies the carbon fraction and the CO2 conversion itself (CARBON_FRACTION, CO2_PER_C), so
@@ -267,6 +269,21 @@ MONTH_LABELS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
 # 3.3 and 3.4: below this many valid pixels the spatial range is not meaningful, because a
 # 30 arc-second grid gives a small AOI only a handful of cells.
 CLIMATE_MIN_PIXELS = 5
+
+# ----------------------------------------------------------------------------
+# Peat Depth - PEATGRIDS
+# -----------------------------------------------------------------------------
+# Raster are generated from multiple data sources, mainly from PEATGRIDS
+
+USER_POLYGON = Path(
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\AOI\indonesia_54034.shp"
+)
+
+PEAT_DEPTH_RASTER = Path(
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\PEATLAND\sea_peat_depth_54034.tif"
+)
+
+
 
 # ---------------------------------------------------------------------------------------
 # Soil classification, WRB 2006 (Climate module, 3.6)
