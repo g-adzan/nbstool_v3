@@ -170,24 +170,29 @@ GEOD_ELLPS = "WGS84"
 # Key species presence (Nature module 2.5). GBIF occurrence points are intersected with the AOI,
 # then summarised by species using record count, individual count, latest event date, and the most
 # frequent Darwin Core basisOfRecord value.
-KEY_SPECIES_POINTS = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\GBIF\key_species.shp" #Postgis Database: nbs/sea/key_species
+
+# ---- Species occurrence points -----------------------------------------------
+species_points_path = r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\GBIF\key_species.shp"
+
+# ---- User polygon ------------------------------------------------------------
+user_polygon_path = r"Z:\NbS_Tools\Dummy\AOI_4326.shp"
+
+# ---- Output ------------------------------------------------------------------
+output_excel_path = (
+    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot\species_occurrence_summary.xlsx"
 )
 
-KEY_SPECIES_USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI_4326.shp" #user input
+# ---- Desired attribute columns (Darwin Core names) ---------------------------
+# The resolver matches these against the (possibly truncated) shapefile fields.
+SPECIES_COLUMN = "species"
+COUNT_COLUMN = "individualCount"
+DATE_COLUMN = "eventDate"
+BASIS_COLUMN = "basisOfRecord"
 
-KEY_SPECIES_OUTPUT = (
-    r"\\OPENMEDIAVAULT\geospatial\NBS\AoH\temp_pilot"
-    r"\species_occurrence_summary.xlsx"
-)
+# Spatial predicate: "intersects" includes points on the boundary,
+# "within" is strictly interior.
+SPATIAL_PREDICATE = "intersects"
 
-KEY_SPECIES_COLUMN = "species"
-KEY_SPECIES_COUNT_COLUMN = "individualCount"
-KEY_SPECIES_DATE_COLUMN = "eventDate"
-KEY_SPECIES_BASIS_COLUMN = "basisOfRecord"
-
-# "intersects" includes occurrence points on the AOI boundary.
-KEY_SPECIES_SPATIAL_PREDICATE = "intersects"
 
 # --------------------------- Plant species occurrence (Nature module 2.7) ---------------------------
 USER_POLYGON = Path(r"Z:\NbS_Tools\Dummy\AOI5_4326.shp")
