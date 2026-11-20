@@ -129,6 +129,9 @@ GABAM_DIR = r"D:\NBSTOOLV3\MOSAIC_2"
 GABAM_YEARS = list(range(2014, 2025))          # 2014..2024 inclusive, the years present in MOSAIC_2
 GABAM_RASTER_TEMPLATE = GABAM_DIR + r"\GABAM_{year}.tif"
 
+
+# ============================ NATURE & BIODIVERSITY ============================
+
 # Forest landscape integrity, FLII (Nature module, 2.1). Grantham et al. 2020 concept,
 # SEA-calibrated (pooled beta), landscape scale ~300 m, masked to forest.
 FLII_CLASS_RASTER  = r"D:\NBSTOOLV3\flii_class_mosaic_SEA_300m.tif"   # 1=Low, 2=Medium, 3=High
@@ -146,7 +149,6 @@ NATUREMAP_LAYERS = {
     "Carbon":       "Z:\Biodiversity\biodiversity_carbon_v3.tif", #assets-geo/v3/biodiversity_carbon_v3.tif
     "Water":        "Z:\Biodiversity\biodiversity_water_v3.tif", #assets-geo/v3/biodiversity_water_v3.tif
 }
-
 
 
 # Biodiversity habitat intersection (Nature module 2.3). Species habitat rasters are filtered using
@@ -186,6 +188,19 @@ KEY_SPECIES_BASIS_COLUMN = "basisOfRecord"
 
 # "intersects" includes occurrence points on the AOI boundary.
 KEY_SPECIES_SPATIAL_PREDICATE = "intersects"
+
+# --------------------------- Plant species occurrence (Nature module 2.7) ---------------------------
+USER_POLYGON = Path(r"Z:\NbS_Tools\Dummy\AOI5_4326.shp")
+PLANT_GDB = Path(r"Z:\NbS_Tools\Spatial_Analysis.gdb")      #postgis database: nbs/sea/plant_occurrence
+PLANT_LAYER = "SEA_plant_occurrence"                        #postgis database: nbs/sea/plant_occurrence
+
+SPECIES = "scientificName"
+CITES = "citesAppendix"
+YEAR = "year"
+
+START_YEAR = 2000
+END_YEAR = 2026
+
 
 # -----------------------------------------------------------------------------
 # People data (F02-P2), seven pre-defined local rasters
