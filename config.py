@@ -125,10 +125,14 @@ RISK_PRESENCE_PCT = 20   # 1.7 representative level = highest class covering >= 
 # A pixel can burn in more than one year, so 3.7 reports the union (area burned at least once) as
 # the headline and the per-year areas as a bar chart. GABAM_RASTER_TEMPLATE keeps a literal
 # {year} placeholder, filled per year with .format(year=...).
-GABAM_DIR = r"D:\NBSTOOLV3\MOSAIC_2"
-GABAM_YEARS = list(range(2014, 2025))          # 2014..2024 inclusive, the years present in MOSAIC_2
-GABAM_RASTER_TEMPLATE = GABAM_DIR + r"\GABAM_{year}.tif"
+GABAM_FOLDER = Path(
+    r"\\OPENMEDIAVAULT\geospatial\GABAM\MOSAIC_2"
+)
+YEARS = range(2014, 2024)
 
+BURNED_VALUE = 1
+
+GEOD = Geod(ellps="WGS84")
 
 # ============================ NATURE & BIODIVERSITY ============================
 
