@@ -157,15 +157,16 @@ NATUREMAP_LAYERS = {
 USER_POLYGON = r"Z:\NbS_Tools\Dummy\AOI2_4326.shp"
 
 BIODIVERSITY_ROOT = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area" #assets-geo/v3/habitat_area
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\updatev3"      #assets-geo/v3/habitat_area
 )
 
 INVENTORY_PATH = (
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\habitat_area\species_iucn_v3.geoparquet" #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
+    BIODIVERSITY_ROOT / "species_iucn_v3.geoparquet"                    #assets-geo/v3/habitat_area/species_iucn_v3.geoparquet
 )
 
 TARGET_DN = 1
-GEOD_ELLPS = "WGS84"
+GEOD = Geod(ellps="WGS84")
+
 
 # Key species presence (Nature module 2.5). GBIF occurrence points are intersected with the AOI,
 # then summarised by species using record count, individual count, latest event date, and the most
