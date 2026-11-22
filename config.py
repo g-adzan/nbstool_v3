@@ -370,12 +370,7 @@ ECOSYSTEM_CLASSES = {
 DISTURBANCE_RULE = "greater_than_zero"
 GEOD_ELLPS = "WGS84"
 
-# =============================================================================
 # Observed Ecosystem Disturbance (F02-P3) - locked 2026-11-09
-# =============================================================================
-
-
-
 # ---------- Land Degradation ----------
 aoi_path = Path(r"Z:\Testing\AOI\AOI2_54034.shp")
 forest_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_COVER\FC_2024_SEA_54034.tif")
@@ -441,47 +436,6 @@ NATURAL_DRIVERS = {
 
 
 # =============================================================================
-# Mangrove Disturbance
-# =============================================================================
-
-USER_AOI = Path(
-    r"Z:\NbS_Tools\Dummy\AOI5_4326.shp"
-)
-
-DATA_DIR = Path(
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\Testing_folder\Threat"
-)
-
-ECOSYSTEM = DATA_DIR / "ecosystem_v3.tif" #assets-geo/v3/threat/ecosystem_v3.tif
-HISTORICAL = DATA_DIR / "historical_deforestation_v3.tif" #assets-geo/v3/threat/historical_deforestation_v3.tif
-FOREST_2024 = DATA_DIR / "forest_2024_v3.tif" #assets-geo/v3/threat/forest_2024_v3.tif
-DISTURBANCE = DATA_DIR / "forest_disturbance_v3.tif" #assets-geo/v3/threat/forest_disturbance_v3.tif
-DRIVERS = DATA_DIR / "drivers_disturbance_v3.tif" #assets-geo/v3/threat/drivers_disturbance_v3.tif
-STORM_RISK = DATA_DIR / "risk_storm_v3.tif" #assets-geo/v3/threat/risk_storm_v3.tif
-
-# PIXEL CLASSES ===========================================================
-
-# ecosystem_v3.tif
-MANGROVE_CLASS = 2
-
-# historical_deforestation_v3.tif
-REMAINING_FOREST_CLASS = 1
-
-# forest_2024_v3.tif
-CURRENT_FOREST_CLASS = 1
-
-# forest_disturbance_v3.tif
-# Any value > 0 = disturbed
-DISTURBANCE_THRESHOLD = 0
-
-# drivers_disturbance_v3.tif
-COMMODITY_CLASSES = [1, 2, 3, 4]
-SETTLEMENT_CLASS = 5
-
-# risk_storm_v3.tif
-STORM_RISK_CLASSES = [4, 5]
-
-# =============================================================================
 # Peatland Disturbance
 # =============================================================================
 
@@ -515,6 +469,7 @@ CURRENT_FOREST = 1
 # Any value > 0 = disturbed
 DISTURBANCE_THRESHOLD = 0
 
+# =============================== F02-P4: Pathway ==========================================
 # ---------------------------------------------------------------------------------------
 # Pathway assignment (F02-P4) - canonical_v3, locked 2026-07-24
 # ---------------------------------------------------------------------------------------
@@ -612,6 +567,21 @@ ACTIVITY_TABLE = r"D:\NBSTOOLV3\canonical_v3_activities.csv"
 DEFAULT_LEAKAGE = 15.0
 DEFAULT_UNCERTAINTY = 10.0
 DEFAULT_BUFFER = 12.0
+
+
+# ----------------------------------------------------------------------------
+# IUCN Conservation Actions catalog, charismatic species (F02-P4, component 4.4)
+# ----------------------------------------------------------------------------
+# The IUCN Conservation Actions catalog is a curated list of conservation actions that can be
+# applied to species and habitats. The tool uses this catalog to identify which
+# conservation actions are relevant to NbS activities. The catalog is provided as an Excel file
+CONSERVATION_FILE = Path(
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\updatev3\Charismatic_conservation_v3.xlsx"
+)
+
+OVERLAP_THRESHOLD = 90
+
+
 
 # ---------------------------------------------------------------------------------------
 # Benefit quantification (F02-P5)
