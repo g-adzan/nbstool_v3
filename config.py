@@ -580,7 +580,7 @@ DEFAULT_BUFFER = 12.0
 # applied to species and habitats. The tool uses this catalog to identify which
 # conservation actions are relevant to NbS activities. The catalog is provided as an Excel file
 CONSERVATION_FILE = Path(
-    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\updatev3\Charismatic_conservation_v3.xlsx"
+    r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\BIODIVERSITY\updatev3\Charismatic_conservation_v3.xlsx"     #assets-geo/v3/habitat_area_v3/Charismatic_conservation_v3.xlsx
 )
 
 OVERLAP_THRESHOLD = 90
