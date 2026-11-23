@@ -377,8 +377,8 @@ GEOD_ELLPS = "WGS84"
 # Observed Ecosystem Disturbance (F02-P3) - locked 2026-11-09
 # ---------- Land Degradation ----------
 aoi_path = Path(r"Z:\Testing\AOI\AOI2_54034.shp")
-forest_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_COVER\FC_2024_SEA_54034.tif")
-degradation_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_DEGRADATION\land_degradation_54034.tif")
+forest_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_COVER\FC_2024_SEA_54034.tif")                   #assets-geo/v3/FC_2024_SEA_54034.tif
+degradation_path = Path(r"\\OPENMEDIAVAULT\geospatial\NBSTOOLV3\LAND_DEGRADATION\land_degradation_54034.tif")   #assets-geo/v3/land_deg_54034_v3.tif
 
 
 # Threat datasets
